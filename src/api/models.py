@@ -9,8 +9,8 @@ class User(db.Model):
     password = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
 
-    diary_entries = db.relationship('DiaryEntry', back_populates='user', lazy=True)
-    favorite_quotes = db.relationship('FavoriteQuote', back_populates='user', lazy=True)
+    diary_entries = db.relationship('Entrada', back_populates='user')
+    favorite_quotes = db.relationship('FavoriteQuote', back_populates='user')
 
     def serialize(self):
         return {
@@ -20,16 +20,16 @@ class User(db.Model):
             # do not serialize the password, its a security breach
         }
     
-class DiaryEntry(db.Model):
-    __tablename__ = 'diary_entry'
+class Entrada(db.Model):
+    __tablename__ = 'Entrada'
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     mood_tag = db.Column(db.String(50), nullable=False)
-    entry_text = db.Column(db.Text, nullable=True)
+    entry_text = db.Column(db.String(1000), nullable=True)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-    user = db.relationship('User', back_populates='diary_entries')
+    user = db.relationship('User', back_populates='Entrada')
 
     def serialize(self):
         return {
@@ -38,4 +38,24 @@ class DiaryEntry(db.Model):
             "mood_tag": self.mood_tag,
             "entry_text": self.entry_text,
             "date": self.date.isoformat()
+        }
+
+class FavoriteQuote(db.Model):
+    __tablename__ = 'favorite_quote'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    quote_text = db.Column(db.Text, nullable=False)
+    author = db.Column(db.String(255), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
+    user = db.relationship('User', back_populates='favorite_quotes')
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "quote_text": self.quote_text,
+            "author": self.author,
+            "created_at": self.created_at.isoformat()
         }
