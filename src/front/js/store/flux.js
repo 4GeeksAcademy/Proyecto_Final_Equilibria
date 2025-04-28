@@ -46,6 +46,26 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				//reset the global store
 				setStore({ demo: demo });
+			},
+			loginUsuario: async (userData) => {
+				try {
+					// fetching data from the backend
+					const resp = await fetch(process.env.BACKEND_URL + "api/login", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify(userData)
+					})
+					if (!resp.ok) {
+						throw new Error("Error accedeindo al user");
+					}
+					let data = await resp.json();
+					sessionStorage.setItem("token", data.token);
+					return true;
+				} catch (error) {
+					console.log("Error loading message from backend", error)
+				}
 			}
 		}
 	};
