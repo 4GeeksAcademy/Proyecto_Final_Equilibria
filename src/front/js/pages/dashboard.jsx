@@ -28,7 +28,7 @@ const Dashboard = () => {
             </div>
             <div className="text-center mb-4">
                 {store.info ? (
-                    <h2 className="text-primary">¡Bienvenido, {store.info.name}!</h2>
+                    <h2 className="text-primary">¡Bienvenido, {store.info.id}!</h2>
                 ) : (
                     <h2 className="text-danger">No hay datos de usuario</h2>
                 )}

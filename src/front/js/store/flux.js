@@ -120,6 +120,48 @@ const getState = ({ getStore, getActions, setStore }) => {
 				} catch (error) {
 					console.log("Error al intentar cerrar sesión:", error);
 				}
+			},
+			favoritos: async () => {
+				try {
+					const token = sessionStorage.getItem("token");
+					const resp = await fetch(process.env.BACKEND_URL + "/api/favorite-quotes", {
+						method: "GET",
+						headers: {
+							"Authorization": "Bearer " + token
+						}
+					});
+
+					if (!resp.ok) {
+						throw new Error("Error, token no es correcto");
+					}
+					let data = await resp.json();
+
+					setStore({ ...getStore(), favoritos: data });
+					return true;
+				} catch (error) {
+					console.log("Error loading message from backend", error);
+				}
+			},
+			eliminarFavorito: async (id) => {
+				try {
+					const token = sessionStorage.getItem("token");
+					const resp = await fetch(process.env.BACKEND_URL + "/api/favorite-quotes/" + id, {
+						method: "DELETE",
+						headers: {
+							"Authorization": "Bearer " + token
+						}
+					});
+
+					if (!resp.ok) {
+						throw new Error("Error, token no es correcto");
+					}
+					let data = await resp.json();
+
+					setStore({ ...getStore(), favoritos: data });
+					return true;
+				} catch (error) {
+					console.log("Error loading message from backend", error);
+				}
 			}
 		}
 	};
