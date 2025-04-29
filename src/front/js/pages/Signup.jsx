@@ -40,7 +40,7 @@ const handleSubmit = async (e) => {
 
     if (userAvailable) {
         alert("User created successfully")
-        // navigate("/login")
+        navigate("/")
     } else {
         alert ("User already exists")
     }
