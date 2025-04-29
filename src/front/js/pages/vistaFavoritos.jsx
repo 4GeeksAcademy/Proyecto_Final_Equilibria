@@ -18,7 +18,7 @@ const VistaFavoritos = () => {
 
     useEffect(() => {
         actions.favoritos();
-    }, []);
+    }, [store.favoritos]);
 
     return (
         <div className="container">
