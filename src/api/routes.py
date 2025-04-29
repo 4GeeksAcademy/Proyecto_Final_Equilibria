@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User
+from api.models import db, User, FavoriteQuote
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt 
@@ -88,4 +88,19 @@ def handle_get_user():
         return jsonify(user.serialize()), 200
     except Exception as e:
         db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@api.route('/favorite-quotes', methods=['GET'])
+@jwt_required()
+def handle_favorite_quotes():
+    try:
+        current_user = get_jwt_identity()
+        favorites = FavoriteQuote.query.filter_by(user_id = current_user).all()
+
+        if not favorites:
+            return jsonify({'error': 'There are no favorites for this user', 'user' : current_user}), 404
+
+        return jsonify(favorites)
+
+    except Exception as e:
         return jsonify({'error': str(e)}), 500
