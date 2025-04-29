@@ -1,5 +1,7 @@
 import React from "react";
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 export const Signup = () => {
 
@@ -7,6 +9,7 @@ export const Signup = () => {
     let [email, setEmail] = useState('')
     let [password, setPassword] = useState('')
     const signupFormRef = useRef(null)
+    const navigate = useNavigate()
     
 
 
@@ -25,8 +28,22 @@ const handlePassword = (e) => {
     setPassword(e.target.value)
 }
 
-const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault()
+
+    if (!email || !password || !name) {
+        alert("All fields are required, please try again.")
+    }
+
+
+    const userAvailable = await action.checkUserAvailable({email})
+
+    if (userAvailable) {
+        alert("User created successfully")
+        // navigate("/login")
+    } else {
+        alert ("User already exists")
+    }
 
     if (signupFormRef.current) {
         signupFormRef.current.reset()
