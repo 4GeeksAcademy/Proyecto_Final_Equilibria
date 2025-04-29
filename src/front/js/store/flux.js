@@ -89,6 +89,37 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("Something went wrong:", error)
 
 				}
+			},
+			verificarToken: async () => {
+				try {
+					// fetching data from the backend
+					const token = sessionStorage.getItem("token");
+					const resp = await fetch(process.env.BACKEND_URL + "/api/user", {
+						method: "GET",
+						headers: {
+							"Authorization": "Bearer " + token
+						}
+					});
+
+					if (!resp.ok) {
+						throw new Error("Error, token no es correcto");
+					}
+					let data = await resp.json();
+					
+					setStore({ info: data });
+					return true;
+				} catch (error) {
+					console.log("Error loading message from backend", error)
+				}
+			},
+			logout: () => {
+				try {
+					sessionStorage.removeItem("token");
+					setStore({ info: null });
+					console.log("Usuario deslogueado exitosamente");
+				} catch (error) {
+					console.log("Error al intentar cerrar sesión:", error);
+				}
 			}
 		}
 	};
