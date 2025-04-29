@@ -48,7 +48,7 @@ const login = () => {
                     <button className="btn btn-primary" type="submit">Log in</button>
                 </div>
                 <div className="col-12">
-                    <button className="btn btn-primary" onClick={() => navigate("/registro")}>
+                    <button className="btn btn-primary" onClick={() => navigate("/signup")}>
                         sign up
                     </button>
                 </div>

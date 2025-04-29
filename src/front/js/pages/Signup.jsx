@@ -1,4 +1,5 @@
 import React from "react";
+import { Context } from "../store/appContext";
 import { useState, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -8,6 +9,7 @@ export const Signup = () => {
     let [name, setName] = useState('')
     let [email, setEmail] = useState('')
     let [password, setPassword] = useState('')
+    const { store, actions } = useContext(Context);
     const signupFormRef = useRef(null)
     const navigate = useNavigate()
     
@@ -36,7 +38,7 @@ const handleSubmit = async (e) => {
     }
 
 
-    const userAvailable = await action.checkUserAvailable({email})
+    const userAvailable = await actions.userSignup({email, password, name})
 
     if (userAvailable) {
         alert("User created successfully")

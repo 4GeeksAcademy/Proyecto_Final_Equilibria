@@ -66,6 +66,29 @@ const getState = ({ getStore, getActions, setStore }) => {
 				} catch (error) {
 					console.log("Error loading message from backend", error)
 				}
+			},
+			userSignup: async (userData) => {
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + "api/user", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify(userData)
+					})
+
+					if (!resp.ok) {
+						throw new Error("Something went wronggg");
+					}
+
+					let data = await resp.json()
+
+					return data
+
+				} catch (error) {
+					console.log("Something went wrong:", error)
+
+				}
 			}
 		}
 	};

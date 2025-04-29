@@ -11,7 +11,7 @@ import injectContext from "./store/appContext";
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 import Login from "./pages/login.jsx";
-import { Signup } from "./pages/Signup.js";
+import { Signup } from "./pages/Signup.jsx";
 
 //create your first component
 const Layout = () => {
