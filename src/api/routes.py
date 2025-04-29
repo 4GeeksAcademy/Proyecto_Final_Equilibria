@@ -104,3 +104,23 @@ def handle_favorite_quotes():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@api.route('/favorite-quotes', methods=['POST'])
+@jwt_required()
+def handle_create_favorite_quote():
+    try:
+        current_user = get_jwt_identity()
+        quote_text = request.json.get('quote_text')
+        author = request.json.get('author')
+
+        if not quote_text or not author:
+            return jsonify({'error': 'Quote text and author are required'}), 400
+
+        new_favorite = FavoriteQuote(user_id=current_user, quote_text=quote_text, author=author)
+        db.session.add(new_favorite)
+        db.session.commit()
+
+        return jsonify(new_favorite.serialize()), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
