@@ -144,3 +144,27 @@ def delete_favorite_quote(favorite_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+    
+@api.route('/entrada', methods=['POST'])
+@jwt_required()
+def create_diary_entry():
+    try:
+        current_user = get_jwt_identity()
+        fecha = request.json.get('fecha')
+        mood_tag = request.json.get('mood_tag')
+        texto = request.json.get('texto')
+
+        
+        if not fecha or not mood_tag or not texto:
+            return jsonify({'error': 'Fecha, mood_tag, and texto are required'}), 400
+
+       
+        new_entry = new_entry(user_id=current_user, fecha=fecha, mood_tag=mood_tag, texto=texto)
+        db.session.add(new_entry)
+        db.session.commit()
+
+        return jsonify(new_entry.serialize()), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+    
