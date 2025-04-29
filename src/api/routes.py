@@ -96,11 +96,12 @@ def handle_favorite_quotes():
     try:
         current_user = get_jwt_identity()
         favorites = FavoriteQuote.query.filter_by(user_id = current_user).all()
+        favorites_list = [item.serialize() for item in favorites]
 
         if not favorites:
             return jsonify({'error': 'There are no favorites for this user', 'user' : current_user}), 404
 
-        return jsonify(favorites)
+        return favorites_list
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
