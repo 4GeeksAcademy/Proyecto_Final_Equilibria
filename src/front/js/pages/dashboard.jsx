@@ -11,8 +11,8 @@ const Dashboard = () => {
     };
 
     const handleLogout = () => {
-        actions.logout(); // Asegúrate de que exista una acción `logout` en tu contexto
-        navigate("/"); // Redirige al usuario a la página de inicio de sesión
+        actions.logout(); 
+        navigate("/"); 
     };
 
     useEffect(() => {

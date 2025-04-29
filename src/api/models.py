@@ -54,7 +54,6 @@ class FavoriteQuote(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     quote_text = db.Column(db.Text, nullable=False)
     author = db.Column(db.String(255), nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     user = db.relationship('User', back_populates='favorite_quotes')
 
@@ -64,5 +63,4 @@ class FavoriteQuote(db.Model):
             "user_id": self.user_id,
             "quote_text": self.quote_text,
             "author": self.author,
-            "created_at": self.created_at.isoformat()
         }
