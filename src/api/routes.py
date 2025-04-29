@@ -125,3 +125,22 @@ def handle_create_favorite_quote():
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
+@api.route('/favorite-quotes/<int:favorite_id>', methods=['DELETE'])
+@jwt_required()
+def delete_favorite_quote(favorite_id):
+    try:
+        current_user = get_jwt_identity()
+        favorite_to_delete = FavoriteQuote.query.filter_by(id=favorite_id, user_id=current_user).first()
+
+        if not favorite_to_delete:
+            return jsonify({'msg': 'Favorite quote not found for this user'}), 404
+
+        db.session.delete(favorite_to_delete)
+        db.session.commit()
+
+        return jsonify({'msg': 'Favorite quote successfully deleted'}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
