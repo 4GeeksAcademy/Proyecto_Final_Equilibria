@@ -21,7 +21,7 @@ const login = () => {
         const usuarioCorrecto = await actions.loginUsuario({ email, password });
         if (usuarioCorrecto) {
             alert("Usuario logueado correctamente");
-            // navigate("/dashboard");
+            navigate("/dashboard");
         }
         else {
             alert("Error al loguear el usuario");
