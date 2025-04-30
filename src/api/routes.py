@@ -7,8 +7,11 @@ from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt 
 from flask_jwt_extended import  JWTManager, create_access_token, jwt_required, get_jwt_identity
+import os
+import openai
 
 api = Blueprint('api', __name__)
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 jwt = JWTManager()  
 bcrypt = Bcrypt()
@@ -167,3 +170,42 @@ def create_diary_entry():
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
     
+
+@api.route('/consejo-personalizado', methods=['POST'])
+@jwt_required()
+def get_personalized_advice():
+    try:
+        current_user = get_jwt_identity()
+        user = User.query.get(current_user)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        gender = user.gender
+        mood_tag = request.json.get('mood_tag')
+        
+        prompt_comportamiento = "Actúa como un coach motivacional empático y profesional. " \
+        "Quiero que brindes un consejo inspirador y cálido para una persona que está atravesando una etapa emocional particular. " \
+        f"Basándote en el estado de ánimo etiquetado como: '{mood_tag}', responde con un mensaje que transmita motivación, acompañamiento y fuerza interior. " \
+        "El consejo debe ser humano, sincero y alentador. " \
+        "Evita frases genéricas. Habla con sensibilidad, como si quisieras levantarle el ánimo con palabras que realmente conecten. " \
+        "No uses un tono frío ni condescendiente. " \
+        "El mensaje debe ser breve (máx. 150 palabras) y emocionalmente significativo. " \
+        f"Solo usa el género de la persona si es necesario para dar mayor calidez. El género es: '{gender}'."
+
+
+        if not mood_tag:
+            return jsonify({'error': 'Mood tag and entry text are required'}), 400
+
+        prompt = f"{prompt_comportamiento}."
+        
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
+        )
+
+        advice = response['choices'][0]['message']['content']
+        return jsonify({'advice': advice}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500

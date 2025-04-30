@@ -8,6 +8,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     name = db.Column(db.String(80), unique=False, nullable=False)
+    gender = db.Column(db.String(20), unique=False, nullable=True, default="male")
     password = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False, default=True)
     is_admin = db.Column(db.Boolean, default=False)
@@ -23,7 +24,8 @@ class User(db.Model):
             "name": self.name,
             "is_active": self.is_active,
             "is_admin": self.is_admin,
-            "preferences": self.preferences or []
+            "preferences": self.preferences or [],
+            "gender": self.gender
             # do not serialize the password, its a security breach
         }
     
