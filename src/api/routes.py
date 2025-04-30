@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, FavoriteQuote
+from api.models import db, User, FavoriteQuote, Entrada
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt 
@@ -144,3 +144,26 @@ def delete_favorite_quote(favorite_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+    
+@api.route('/entrada', methods=['POST'])
+@jwt_required()
+def create_diary_entry():
+    try:
+        current_user = get_jwt_identity()
+        mood_tag = request.json.get('mood_tag')
+        entry_text = request.json.get('entry_text')
+
+        
+        if not mood_tag or not entry_text:
+            return jsonify({'error': 'Fecha, mood_tag, and texto are required'}), 400
+
+       
+        new_entry = Entrada(user_id=current_user, mood_tag=mood_tag, entry_text=entry_text)
+        db.session.add(new_entry)
+        db.session.commit()
+
+        return jsonify(new_entry.serialize()), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+    
