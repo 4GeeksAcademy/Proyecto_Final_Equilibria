@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { act, useContext, useState } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
 
@@ -21,7 +21,12 @@ const login = () => {
         const usuarioCorrecto = await actions.loginUsuario({ email, password });
         if (usuarioCorrecto) {
             alert("Usuario logueado correctamente");
-            navigate("/dashboard");
+            if (await actions.isAdmin()) {
+                navigate("/admin-dashboard");
+            } else {
+                navigate("/dashboard");
+            }
+            
         }
         else {
             alert("Error al loguear el usuario");
