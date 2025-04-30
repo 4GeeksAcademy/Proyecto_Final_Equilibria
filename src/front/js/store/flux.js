@@ -153,11 +153,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 
 					if (!resp.ok) {
+						alert('There was an error trying to delete you favorite, try again')
 						throw new Error("Error, token no es correcto");
 					}
 					let data = await resp.json();
 
 					setStore({ ...getStore(), favoritos: data });
+					alert('Favorite quote successfully deleted!')
 					return true;
 				} catch (error) {
 					console.log("Error loading message from backend", error);
