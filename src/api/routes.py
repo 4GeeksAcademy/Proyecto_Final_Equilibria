@@ -211,3 +211,41 @@ def get_personalized_advice():
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
+@api.route('/admin/users', methods=['GET'])
+@jwt_required()
+def get_users():
+    try:
+       
+        current_user = get_jwt_identity()
+        user = User.query.get(current_user)
+
+        
+        if not user or not user.is_admin:
+            return jsonify({'error': 'Access denied. Admin privileges required.'}), 403
+
+        
+        page = request.args.get('page', 1, type=int)
+        search = request.args.get('search', '', type=str)
+
+        
+        query = User.query
+        if search:
+            query = query.filter(
+                (User.name.ilike(f"%{search}%")) | (User.email.ilike(f"%{search}%"))
+            )
+
+        
+        per_page = 10  
+        paginated_users = query.paginate(page=page, per_page=per_page, error_out=False)
+
+        
+        users = [user.serialize() for user in paginated_users.items]
+
+        return jsonify({
+            'users': users,
+            'total': paginated_users.total,
+            'pages': paginated_users.pages,
+            'current_page': paginated_users.page
+        }), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
