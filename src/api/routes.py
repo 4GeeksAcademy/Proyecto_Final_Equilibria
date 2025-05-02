@@ -223,8 +223,19 @@ def get_all_users():
         if not user.is_admin:
             return jsonify({'error': 'Unauthorized access'}), 403
 
-        users = User.query.all()
+        name_filter = request.args.get('name', None)
+        email_filter = request.args.get('email', None)
+
+        query = User.query
+
+        if name_filter:
+            query = query.filter(User.name.ilike(f"%{name_filter}%"))
+        if email_filter:
+            query = query.filter(User.email.ilike(f"%{email_filter}%"))
+
+        users = query.all()
         users_list = [user.serialize() for user in users]
+
         return jsonify(users_list), 200
     except Exception as e:
         db.session.rollback()
