@@ -51,7 +51,7 @@ def handle_create_user():
         return jsonify({'message': 'User created successfully'}), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)}), 500
     
 @api.route('/login', methods=['POST'])
 def login():
