@@ -35,6 +35,7 @@ def handle_create_user():
         email = request.json.get('email')
         password = request.json.get('password')
         name = request.json.get('name')
+        gender= request.json.get('gender')
         is_admin = request.json.get('is_admin', False) in [True, "true", "True"]
         if not email or not password or not name :
             return jsonify({'e': 'Email, Password and Name are required.'}), 400
@@ -45,7 +46,7 @@ def handle_create_user():
             return jsonify({'error': 'email already exists'})
         
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-        new_user = User(email=email, password=hashed_password, name=name, is_admin=is_admin)   
+        new_user = User(email=email, password=hashed_password, name=name, is_admin=is_admin, gender=gender)   
         db.session.add(new_user)
         db.session.commit()
         return jsonify({'message': 'User created successfully'}), 201
