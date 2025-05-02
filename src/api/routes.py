@@ -212,3 +212,20 @@ def get_personalized_advice():
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
+@api.route('/admin/users', methods=['GET'])
+@jwt_required()
+def get_all_users():
+    try:
+        current_user = get_jwt_identity()
+        user = User.query.get(current_user)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        if not user.is_admin:
+            return jsonify({'error': 'Unauthorized access'}), 403
+
+        users = User.query.all()
+        users_list = [user.serialize() for user in users]
+        return jsonify(users_list), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
