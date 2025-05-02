@@ -20,7 +20,13 @@ const Dashboard = () => {
     }, []);
 
     return (
+        
         <div className="container d-flex flex-column align-items-center justify-content-center min-vh-100 bg-light">
+            {store.message !== null && (
+                <div className="alert alert-success" role="alert">
+                    {store.message}
+                </div>
+            )}
             <div className="w-100 d-flex justify-content-end p-3">
                 <button className="btn btn-danger" onClick={handleLogout}>
                     Logout
