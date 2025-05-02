@@ -17,7 +17,9 @@ const VistaFavoritos = () => {
     };
 
     useEffect(() => {
-        actions.favoritos();
+        const url = "/api/favorite-quotes";
+        const seccion = "favoritos";
+        actions.listaFetch(url, seccion);
     }, [store.favoritos]);
 
     return (

@@ -127,10 +127,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("Error al intentar cerrar sesión:", error);
 				}
 			},
-			favoritos: async () => {
+			listaFetch: async (url, seccion) => {
 				try {
 					const token = sessionStorage.getItem("token");
-					const resp = await fetch(process.env.BACKEND_URL + "/api/favorite-quotes", {
+					const resp = await fetch(process.env.BACKEND_URL + url, {
 						method: "GET",
 						headers: {
 							"Authorization": "Bearer " + token
@@ -142,7 +142,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 					let data = await resp.json();
 
-					setStore({ ...getStore(), favoritos: data });
+					setStore({ ...getStore(), [seccion]: data });
 					return true;
 				} catch (error) {
 					console.log("Error loading message from backend", error);
