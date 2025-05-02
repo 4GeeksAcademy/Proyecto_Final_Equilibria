@@ -16,6 +16,7 @@ import  Dashboard  from "./pages/dashboard.jsx";
 import VistaFavoritos  from "./pages/vistaFavoritos.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import Registrodiario from "./pages/registrodiario.jsx";
+import  VistaUsuarios  from "./pages/VistaUsuarios.jsx";
 
 //create your first component
 const Layout = () => {
@@ -36,6 +37,7 @@ const Layout = () => {
                         <Route element={<Dashboard />} path="/dashboard" />
                         <Route element={<AdminDashboard />} path="/admin-dashboard" />
                         <Route element={<Registrodiario />} path="/registrar-entrada" />
+                        <Route element={<VistaUsuarios />} path="/vista-usuarios" />
                         <Route element={<VistaFavoritos />} path="/favoritos" />
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />

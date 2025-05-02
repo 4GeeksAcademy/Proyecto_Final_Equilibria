@@ -1,10 +1,29 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { Context } from "../store/appContext";
+
 
 const AdminDashboard = () => {
+    const { store, actions } = useContext(Context);
+    const navigate = useNavigate();
+
+    const handleNavigate = (path) => {
+        navigate(path);
+    };
+    const handleLogout = () => {
+        actions.logout();
+        navigate("/");
+    };
 
     return (
 
         <div className="row row-cols-1 row-cols-md-2 g-4 px-4">
+            <div>
+                <button className="btn btn-danger" onClick={handleLogout}>
+                    Logout
+                </button>
+            </div>
             <div className="col">
                 <div className="card pb-3">
                     <img src="..." className="card-img-top" alt="..."/>
@@ -60,6 +79,11 @@ const AdminDashboard = () => {
                         <a href="#" className="btn btn-primary mx-2 bg-danger">Eliminar</a>
                     </div>
                 </div>
+            </div>
+            <div>
+                <button className="btn btn-primary mx-2 bg-success"onClick={() => handleNavigate("/vista-usuarios")}>
+                    Ver usuarios           
+                </button>
             </div>
         </div>
 
