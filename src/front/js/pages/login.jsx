@@ -20,7 +20,6 @@ const login = () => {
 
         const usuarioCorrecto = await actions.loginUsuario({ email, password });
         if (usuarioCorrecto) {
-            alert("Usuario logueado correctamente");
             if (await actions.isAdmin()) {
                 navigate("/admin-dashboard");
             } else {
