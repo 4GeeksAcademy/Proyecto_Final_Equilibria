@@ -1,8 +1,8 @@
 import React, { useState, useContext } from "react";
-import { AppContext } from "../store/appContext";
+import { Context } from "../store/appContext";
 
 const RegistroEstadoAnimo = () => {
-  const { store, actions } = useContext(AppContext);
+  const { store, actions } = useContext(Context);
   const [estado, setEstado] = useState("");
   const [descripcion, setDescripcion] = useState("");
 

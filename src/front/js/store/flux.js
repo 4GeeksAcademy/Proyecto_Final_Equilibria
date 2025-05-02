@@ -1,7 +1,13 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			message: null,
+			// Información del usuario
+
+			info: null, // Información del usuario autenticado
+			token: sessionStorage.getItem("token") || null, // Token almacenado
+			message: null, // Mensaje genérico
+			estado: null, // Estado de ánimo del usuario
+			favoritos: [], // Lista de favoritos
 			demo: [
 				{
 					title: "FIRST",
@@ -190,7 +196,25 @@ const getState = ({ getStore, getActions, setStore }) => {
 				} catch (error) {
 					console.log("Error loading message from backend", error)
 				}
-			}
+			},
+			mensajePersonalizado: async(mood_tag) => {
+				try {
+					// fetching data from the backend
+					const resp = await fetch(process.env.BACKEND_URL + "/api/consejo-personalizado", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({ mood_tag })
+					});
+					const data = await resp.json();
+					setStore({ ...getStore(), message: data.advice });
+					return true
+				}
+				catch (error) {
+					console.log("Error loading message from backend", error)
+				}
+			},
 		}
 	};
 };
