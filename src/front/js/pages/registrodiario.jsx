@@ -11,17 +11,14 @@ const RegistroDiario = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!estado.trim() || !descripcion.trim()) {
+    if (!estado.trim()=== "" || !descripcion.trim()=== "") {
       alert("Por favor, completa todos los campos antes de guardar.");
       return;
     }
-
-
-    actions.guardarEstadodeanimo({ estado, descripcion });
+    actions.guardarEstadodeanimo({ "mood_tag": estado, "entry_text" : descripcion });
     navigate("/diario");
     console.log("Estado de ánimo:", estado);
     console.log("Descripción:", descripcion);
-
 
     setEstado("");
     setDescripcion("");

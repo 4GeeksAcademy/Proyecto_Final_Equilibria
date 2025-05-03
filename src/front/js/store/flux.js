@@ -174,7 +174,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			guardarEstadodeanimo: async (estado) => {
 				try {
 					const token = sessionStorage.getItem("token");
-					const resp = await fetch(process.env.BACKEND_URL + "/api/diario", {
+					const resp = await fetch(process.env.BACKEND_URL + "api/entrada", {
 						method: "POST",
 						headers: {
 							"Authorization": "Bearer " + token,
