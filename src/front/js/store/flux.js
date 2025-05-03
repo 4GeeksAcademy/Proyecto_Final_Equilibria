@@ -171,8 +171,27 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("Error loading message from backend", error);
 				}
 			},
-			guardarEstadodeanimo: (estado) => {
-				setStore({ ...getStore(), estado: estado });
+			guardarEstadodeanimo: async (estado) => {
+				try {
+					const token = sessionStorage.getItem("token");
+					const resp = await fetch(process.env.BACKEND_URL + "/api/diario", {
+						method: "POST",
+						headers: {
+							"Authorization": "Bearer " + token,
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify(estado)
+					});
+
+					if (!resp.ok) {
+						throw new Error("Error, token no es correcto");
+					}
+					let data = await resp.json();
+
+					return true;
+				} catch (error) {
+					console.log("Error loading message from backend", error)
+				}
 			},
 			isAdmin: async () => {
 				try {
