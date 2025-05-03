@@ -240,3 +240,20 @@ def get_all_users():
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+@api.route('/diario', methods=['GET'])
+@jwt_required()
+def get_diary_entries():
+    try:
+        current_user = get_jwt_identity()
+        entries = Entrada.query.filter_by(user_id=current_user).all()
+        entries_list = [entry.serialize() for entry in entries]
+
+        if not entries:
+            return jsonify({'error': 'No diary entries found for this user'}), 404
+
+        return jsonify(entries_list), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500 
+
+
