@@ -6,12 +6,12 @@ import { useNavigate } from "react-router-dom";
 const Diario = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
-    const [url, setUrl] = useState("/api/diario");
+    const [url, setUrl] = useState("api/diario");
 
     useEffect(() => {
         const seccion = "listaEntradas";
         actions.listaFetch(url, seccion); // Fetch de las entradas
-    }, [store.listaEntradas]);
+    }, []);
 
     const handleNavigate = (path) => {
         navigate(path);
