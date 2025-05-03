@@ -47,7 +47,7 @@ const Dashboard = () => {
                             <h5 className="card-title">Registrar Nueva Entrada</h5>
                             <button
                                 className="btn btn-primary w-100"
-                                onClick={() => handleNavigate("/registrar-entrada")}
+                                onClick={() => handleNavigate("/diario")}
                             >
                                 Ir
                             </button>
