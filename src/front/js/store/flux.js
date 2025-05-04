@@ -2,9 +2,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			// Información del usuario
-
+			// mensajePorMood : false,
 			info: null, // Información del usuario autenticado
 			token: sessionStorage.getItem("token") || null, // Token almacenado
+			mensajeIA: null, // Mensaje generado por IA
 			message: null, // Mensaje genérico
 			estado: null, // Estado de ánimo del usuario
 			favoritos: [], // Lista de favoritos
@@ -26,7 +27,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
 			},
-
 			getMessage: async () => {
 				try {
 					// fetching data from the backend
@@ -151,7 +151,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			eliminarFavorito: async (id) => {
 				try {
 					const token = sessionStorage.getItem("token");
-					const resp = await fetch(process.env.BACKEND_URL + "/api/favorite-quotes/" + id, {
+					const resp = await fetch(process.env.BACKEND_URL + "api/favorite-quotes/" + id, {
 						method: "DELETE",
 						headers: {
 							"Authorization": "Bearer " + token
@@ -186,7 +186,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (!resp.ok) {
 						throw new Error("Error, token no es correcto");
 					}
-					let data = await resp.json();
+					setStore({...getStore(), estado: estado.mood_tag });
 
 					return true;
 				} catch (error) {
@@ -218,22 +218,132 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			mensajePersonalizado: async(mood_tag) => {
 				try {
+					setStore({ ...getStore(), loadingMensajeIA: true, mensajeIA: null });
+					const token = sessionStorage.getItem("token");
 					// fetching data from the backend
-					const resp = await fetch(process.env.BACKEND_URL + "/api/consejo-personalizado", {
+					const resp = await fetch(process.env.BACKEND_URL + "api/consejo-personalizado", {
 						method: "POST",
 						headers: {
-							"Content-Type": "application/json"
+							"Content-Type": "application/json",
+							Authorization: "Bearer " + token
 						},
 						body: JSON.stringify({ mood_tag })
 					});
 					const data = await resp.json();
-					setStore({ ...getStore(), message: data.advice });
+					setStore({ ...getStore(), mensajeIA: data.advice, loadingMensajeIA: false  });
 					return true
 				}
 				catch (error) {
 					console.log("Error loading message from backend", error)
+					setStore({ ...getStore(), loadingMensajeIA: false });
 				}
 			},
+			mensajePorMood: async () => {
+				const store = getStore();
+				await getActions().mensajePersonalizado(store.estado);
+			},
+			fraseMotivacional: async () => {
+				try {
+					setStore({ ...getStore(), loadingFraseMotivacionalIA: true, fraseMotivacional: null });
+					const token = sessionStorage.getItem("token");
+					const resp = await fetch(process.env.BACKEND_URL + "api/frase-motivacional", {
+						method: "POST",
+						headers: {
+							"Authorization": "Bearer " + token
+						}
+					});
+
+					if (!resp.ok) {
+						throw new Error("Error, token no es correcto");
+					}
+					let data = await resp.json();
+
+					setStore({ ...getStore(), fraseMotivacional: data, loadingFraseMotivacionalIA: false });
+					return true;
+				} catch (error) {
+					console.log("Error loading message from backend", error)
+					setStore({ ...getStore(), loadingFraseMotivacionalIA: false});
+				}
+			},
+			frasesMotivacionales: async () => {
+				try {
+					setStore({ ...getStore(), loadingFrasesMotivacionalesIA: true, frasesMotivacionales: null });
+					const token = sessionStorage.getItem("token");
+					const resp = await fetch(process.env.BACKEND_URL + "api/frases-motivacionales", {
+						method: "POST",
+						headers: {
+							"Authorization": "Bearer " + token
+						}
+					});
+
+					if (!resp.ok) {
+						throw new Error("Error, token no es correcto");
+					}
+					let data = await resp.json();
+
+					setStore({ ...getStore(), frasesMotivacionales: data, loadingFrasesMotivacionalesIA: false });
+					return true;
+				} catch (error) {
+					console.log("Error loading message from backend", error)
+					setStore({ ...getStore(), loadingFrasesMotivacionalesIA: false});
+				}
+			},
+			guardarFraseFavorita: async (frase) => {
+				try {
+					const token = sessionStorage.getItem("token");
+					const resp = await fetch(process.env.BACKEND_URL + "api/favorite-quotes", {
+						method: "POST",
+						headers: {
+							"Authorization": "Bearer " + token,
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({"quote_text":frase.quote, "author":frase.author})
+					});
+
+					if (!resp.ok) {
+						throw new Error("Error, token no es correcto");
+					}
+					let data = await resp.json();
+
+					const yaExiste = store.favoritos.some(
+						fav => fav.quote === nuevoFavorito.quote && fav.author === nuevoFavorito.author
+					  );
+					
+					  if (yaExiste) {
+						alert("Esta frase ya está en tus favoritos.");
+						return;
+					  }
+
+					setStore({ ...getStore(), favoritos: data });
+					return true;
+				} catch (error) {
+					console.log("Error loading message from backend", error)
+				}
+			},
+			cargarRecomendaciones: async (busqueda) => {
+				try {
+					const token = sessionStorage.getItem("token");
+					const resp = await fetch(process.env.BACKEND_URL + "api/recomendaciones", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							"Authorization": "Bearer " + token
+						},
+						body: JSON.stringify({ "busqueda": busqueda })
+					});
+
+					if (!resp.ok) {
+						throw new Error("Error, token no es correcto");
+					}
+					let data = await resp.json();
+
+					setStore({ ...getStore(), recomendaciones: data });
+					return true;
+				}
+				catch (error) {
+					console.log("Error loading message from backend", error)
+				}
+			}
 		}
 	};
 };

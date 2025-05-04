@@ -11,38 +11,50 @@ const Dashboard = () => {
     };
 
     const handleLogout = () => {
-        actions.logout(); 
-        navigate("/"); 
+        actions.logout();
+        navigate("/");
     };
 
     useEffect(() => {
         actions.verificarToken();
+        actions.fraseMotivacional();
     }, []);
 
     return (
-        
         <div className="container d-flex flex-column align-items-center justify-content-center min-vh-100 bg-light">
-            {store.message !== null && (
-                <div className="alert alert-success" role="alert">
-                    {store.message}
+            {/* Frase motivacional */}
+            {store.loadingFraseMotivacionalIA ? (
+                <div className="alert alert-info text-center w-100">
+                    <p>Cargando frase motivacional...</p>
                 </div>
-            )}
+            ) : store.fraseMotivacional ? (
+                <div className="alert alert-success text-center w-100 shadow-sm">
+                    <h2 className="mb-2">{store.fraseMotivacional.quote}</h2>
+                    <p className="mb-0 text-muted">- {store.fraseMotivacional.author}</p>
+                </div>
+            ) : null}
+
+            {/* Logout button */}
             <div className="w-100 d-flex justify-content-end p-3">
                 <button className="btn btn-danger" onClick={handleLogout}>
                     Logout
                 </button>
             </div>
+
+            {/* Welcome message */}
             <div className="text-center mb-4">
                 {store.info ? (
-                    <h2 className="text-primary">¡Bienvenido, {store.info.id}!</h2>
+                    <h2 className="text-primary">¡Bienvenido, {store.info.name}!</h2>
                 ) : (
                     <h2 className="text-danger">No hay datos de usuario</h2>
                 )}
                 <h1 className="mt-3">Dashboard</h1>
             </div>
+
+            {/* Navigation buttons */}
             <div className="navigation-buttons row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                 <div className="col">
-                    <div className="card shadow-sm">
+                    <div className="card shadow-sm border-0">
                         <div className="card-body text-center">
                             <h5 className="card-title">Registrar Nueva Entrada</h5>
                             <button
@@ -55,7 +67,7 @@ const Dashboard = () => {
                     </div>
                 </div>
                 <div className="col">
-                    <div className="card shadow-sm">
+                    <div className="card shadow-sm border-0">
                         <div className="card-body text-center">
                             <h5 className="card-title">Ver Frases Motivacionales</h5>
                             <button
@@ -68,7 +80,7 @@ const Dashboard = () => {
                     </div>
                 </div>
                 <div className="col">
-                    <div className="card shadow-sm">
+                    <div className="card shadow-sm border-0">
                         <div className="card-body text-center">
                             <h5 className="card-title">Ver Recomendaciones</h5>
                             <button
@@ -81,7 +93,7 @@ const Dashboard = () => {
                     </div>
                 </div>
                 <div className="col">
-                    <div className="card shadow-sm">
+                    <div className="card shadow-sm border-0">
                         <div className="card-body text-center">
                             <h5 className="card-title">Ver Favoritos</h5>
                             <button
@@ -94,7 +106,7 @@ const Dashboard = () => {
                     </div>
                 </div>
                 <div className="col">
-                    <div className="card shadow-sm">
+                    <div className="card shadow-sm border-0">
                         <div className="card-body text-center">
                             <h5 className="card-title">Editar Información Personal</h5>
                             <button

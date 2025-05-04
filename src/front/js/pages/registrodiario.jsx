@@ -8,37 +8,57 @@ const RegistroDiario = () => {
   const [estado, setEstado] = useState("");
   const [descripcion, setDescripcion] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!estado.trim()=== "" || !descripcion.trim()=== "") {
+    if (estado.trim() === "" || descripcion.trim() === "") {
       alert("Por favor, completa todos los campos antes de guardar.");
       return;
     }
-    actions.guardarEstadodeanimo({ "mood_tag": estado, "entry_text" : descripcion });
+    await actions.guardarEstadodeanimo({ mood_tag: estado, entry_text: descripcion });
+    await actions.mensajePorMood();
     navigate("/diario");
-    console.log("Estado de ánimo:", estado);
-    console.log("Descripción:", descripcion);
+  };
 
-    setEstado("");
-    setDescripcion("");
+  const handleNavigateToDiario = () => {
+    navigate("/diario");
+  };
+
+  const handleLogout = () => {
+    actions.logout();
+    navigate("/");
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-2xl shadow-md">
-      <div>
-        <h2 className="text-2xl font-bold mb-4 text-gray-800">Registrar estado de ánimo</h2>
+    <div className="container mt-5">
+      {/* Header */}
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <button
+          className="btn btn-secondary"
+          onClick={handleNavigateToDiario}
+        >
+          Volver al Diario
+        </button>
+        <button
+          className="btn btn-danger"
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
       </div>
-      <div>
+
+      {/* Formulario */}
+      <div className="card shadow-lg p-4">
+        <h2 className="text-center mb-4">Registrar estado de ánimo</h2>
         <form onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="estado" className="block text-sm font-medium text-gray-700 mb-1">
+          <div className="mb-3">
+            <label htmlFor="estado" className="form-label">
               Estado de ánimo
             </label>
             <select
               id="estado"
               name="estado"
-              className="w-full border border-gray-300 rounded-xl p-2 mb-4 focus:ring-2 focus:ring-blue-400"
+              className="form-select"
               value={estado}
               onChange={(e) => setEstado(e.target.value)}
               required
@@ -51,15 +71,15 @@ const RegistroDiario = () => {
               <option value="enojado">Enojado 😡</option>
             </select>
           </div>
-          <div className="d-flex flex-column">
-            <label htmlFor="descripcion" className="block text-sm font-medium text-gray-700 mb-1">
+          <div className="mb-3">
+            <label htmlFor="descripcion" className="form-label">
               Escribe lo que sientes
             </label>
             <textarea
               id="descripcion"
               name="descripcion"
               rows="4"
-              className="w-full border border-gray-300 rounded-xl p-2 mb-4 focus:ring-2 focus:ring-blue-400"
+              className="form-control"
               placeholder="Escribe aquí..."
               value={descripcion}
               onChange={(e) => setDescripcion(e.target.value)}
@@ -69,7 +89,7 @@ const RegistroDiario = () => {
           <div>
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-xl hover:bg-blue-700 transition duration-300"
+              className="btn btn-primary w-100"
             >
               Guardar entrada
             </button>
