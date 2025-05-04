@@ -16,42 +16,59 @@ const VistaFavoritos = () => {
         navigate("/");
     };
 
+    
     useEffect(() => {
-        const url = "/api/favorite-quotes";
+        const url = "api/favorite-quotes";
         const seccion = "favoritos";
         actions.listaFetch(url, seccion);
     }, [store.favoritos]);
 
     return (
-        <div className="container">
-            <div className="w-100 d-flex justify-content-between p-3">
-                <button className="btn btn-secondary" onClick={() => handleNavigate("/dashboard")}>
+        <div className="container mt-5">
+            {/* Header */}
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <button
+                    className="btn btn-secondary shadow-sm"
+                    onClick={() => handleNavigate("/dashboard")}
+                >
                     Regresar al Dashboard
                 </button>
-                <button className="btn btn-danger" onClick={handleLogout}>
+                <button
+                    className="btn btn-danger shadow-sm"
+                    onClick={handleLogout}
+                >
                     Logout
                 </button>
             </div>
-            <h1 className="text-center mt-5">Vista de Favoritos</h1>
-            <p className="text-center">Aquí puedes ver tus frases favoritas.</p>
+
+            {/* Title */}
+            <h1 className="text-center mb-4 text-primary">Tus Frases Favoritas</h1>
+            <p className="text-center text-muted">Aquí puedes ver y gestionar tus frases favoritas.</p>
+
+            {/* Favoritos */}
             {store.favoritos && store.favoritos.length > 0 ? (
-                store.favoritos.map((favorito, index) => (
-                    <div key={index} className="card mb-3">
-                        <div className="card-body">
-                            <h5 className="card-title">{favorito.quote_text}</h5>
-                            <p className="card-text">{favorito.author}</p>
-                            <button
-                                className="btn btn-danger"
-                                onClick={() => actions.eliminarFavorito(favorito.id)}
-                            >
-                                Eliminar de Favoritos
-                            </button>
+                <div className="row g-4">
+                    {store.favoritos.map((favorito, index) => (
+                        <div key={index} className="col-md-6 col-lg-4">
+                            <div className="card shadow-sm border-0">
+                                <div className="card-body">
+                                    <h5 className="card-title text-dark">{favorito.quote_text}</h5>
+                                    <p className="card-text text-muted">- {favorito.author}</p>
+                                    <button
+                                        className="btn btn-danger w-100"
+                                        onClick={() => actions.eliminarFavorito(favorito.id)}
+                                    >
+                                        Eliminar de Favoritos
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                ))
+                    ))}
+                </div>
             ) : (
                 <h2 className="text-danger text-center mt-4">No tienes frases favoritas.</h2>
             )}
+
         </div>
     );
 };

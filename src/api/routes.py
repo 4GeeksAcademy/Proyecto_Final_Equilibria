@@ -9,6 +9,8 @@ from flask_bcrypt import Bcrypt
 from flask_jwt_extended import  JWTManager, create_access_token, jwt_required, get_jwt_identity
 import os
 import openai
+import json
+import re
 
 api = Blueprint('api', __name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -208,6 +210,140 @@ def get_personalized_advice():
 
         advice = response['choices'][0]['message']['content']
         return jsonify({'advice': advice}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@api.route('/frase-motivacional', methods=['POST'])
+@jwt_required()
+def get_quote():
+    try:
+        current_user = get_jwt_identity()
+        user = User.query.get(current_user)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        
+        prompt_comportamiento = """
+Genera una frase motivacional breve y poderosa junto con su autor. Devuélvela únicamente como un JSON con las siguientes claves:
+
+{
+  "quote": "Tu frase aquí",
+  "author": "Nombre del autor"
+}
+
+Evita rodeos, explicaciones o texto adicional. El resultado debe estar 100% en formato JSON válido. No inventes autores si no los conocés.
+"""
+
+        prompt = f"{prompt_comportamiento}."
+        
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
+        )
+
+        advice = response['choices'][0]['message']['content']
+        advice_json = json.loads(advice)
+        return jsonify(advice_json), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@api.route('/frases-motivacionales', methods=['POST'])
+@jwt_required()
+def get_quotes():
+    try:
+        current_user = get_jwt_identity()
+        user = User.query.get(current_user)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        
+        prompt_comportamiento = """
+Genera 9 frases motivacionales breves y poderosas junto con su autor. Devuélvelas únicamente como un JSON con las siguientes claves:
+[
+    {
+        "quote": "Tu frase aquí",
+        "author": "Nombre del autor"
+    },
+    {
+        "quote": "Tu frase aquí",
+        "author": "Nombre del autor"
+    }
+]
+Evita rodeos, explicaciones o texto adicional. El resultado debe estar 100% en formato JSON válido. No inventes autores si no los conocés.
+"""
+
+        prompt = f"{prompt_comportamiento}."
+        
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
+        )
+
+        advice = response['choices'][0]['message']['content']
+
+        match = re.search(r"\[.*\]", advice, re.DOTALL)
+        if not match:
+            return jsonify({"error": "No se encontró un JSON válido en la respuesta"}), 500
+        
+        json_string = match.group(0)
+        advice_json = json.loads(json_string)
+        return jsonify(advice_json), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@api.route('/recomendaciones', methods=['POST'])
+@jwt_required()
+def get_recommendations():
+    try:
+        current_user = get_jwt_identity()
+        user = User.query.get(current_user)
+        busqueda_text = request.json.get('busqueda', '')
+        if busqueda_text:
+            prompt_comportamiento = f"""
+Genera 5 recomendaciones útiles basadas en la siguiente necesidad o estado: "{busqueda_text}". 
+Las recomendaciones pueden incluir películas, series, ejercicios de respiración, prácticas de mindfulness, libros o podcasts.
+
+Devuélvelas únicamente como un arreglo JSON con el siguiente formato:
+[
+    {{
+        "type": "Tipo de contenido (película, serie, ejercicio, podcast, libro, etc.)",
+        "title": "Título o nombre de la recomendación",
+        "description": "Descripción breve y clara de la recomendación"
+    }},
+    {{
+        "type": "Tipo de contenido (película, serie, ejercicio, podcast, libro, etc.)",
+        "title": "Título o nombre de la recomendación",
+        "description": "Descripción breve y clara de la recomendación"
+    }}
+]
+
+No incluyas ningún texto fuera del JSON. No inventes datos si no los conocés.
+El resultado debe estar 100% en formato JSON válido.
+"""
+
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        
+        prompt = f"{prompt_comportamiento}."
+
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "user", "content": prompt }
+            ]
+        )
+        advice = response['choices'][0]['message']['content']
+        match = re.search(r"\[.*\]", advice, re.DOTALL)
+        if not match:
+            return jsonify({"error": "No se encontró un JSON válido en la respuesta"}), 500
+        json_string = match.group(0)
+        advice_json = json.loads(json_string)
+        return jsonify(advice_json), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500

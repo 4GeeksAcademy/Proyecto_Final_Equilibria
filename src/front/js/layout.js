@@ -18,6 +18,9 @@ import AdminDashboard from "./pages/AdminDashboard.jsx";
 import Registrodiario from "./pages/registrodiario.jsx";
 import  VistaUsuarios  from "./pages/VistaUsuarios.jsx";
 import Diario from "./pages/Diario.jsx";
+import  FrasesMotivacionales  from "./pages/FrasesMotivacionales.jsx";
+import Recomendaciones from "./pages/Recomendaciones.jsx";
+
 
 //create your first component
 const Layout = () => {
@@ -31,7 +34,6 @@ const Layout = () => {
         <div>
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
-                    <Navbar />
                     <Routes>
                         <Route element={<Login />} path="/" />
                         <Route element={<Signup />} path="/signup" />
@@ -39,6 +41,8 @@ const Layout = () => {
                         <Route element={<Dashboard />} path="/dashboard" />
                         <Route element={<AdminDashboard />} path="/admin-dashboard" />
                         <Route element={<Registrodiario />} path="/registrar-entrada" />
+                        <Route element={<FrasesMotivacionales />} path="/frases-motivacionales" />
+                        <Route element={<Recomendaciones />} path="/recomendaciones" />
                         <Route element={<VistaUsuarios />} path="/vista-usuarios" />
                         <Route element={<VistaFavoritos />} path="/favoritos" />
                         <Route element={<Demo />} path="/demo" />
