@@ -12,6 +12,7 @@ class User(db.Model):
     password = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False, default=True)
     is_admin = db.Column(db.Boolean, default=False)
+    force_password_change = db.Column(db.Boolean, default=False)
     preferences = db.Column(ARRAY(db.String), nullable=True)
 
     diary_entries = db.relationship('Entrada', back_populates='user')
@@ -25,7 +26,8 @@ class User(db.Model):
             "is_active": self.is_active,
             "is_admin": self.is_admin,
             "preferences": self.preferences or [],
-            "gender": self.gender
+            "gender": self.gender,
+            "force_password_change": self.force_password_change,
             # do not serialize the password, its a security breach
         }
     

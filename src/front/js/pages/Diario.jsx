@@ -3,7 +3,6 @@ import { useContext } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
 
-
 const Diario = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();

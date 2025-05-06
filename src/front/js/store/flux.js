@@ -186,7 +186,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (!resp.ok) {
 						throw new Error("Error, token no es correcto");
 					}
-					setStore({...getStore(), estado: estado.mood_tag });
+					setStore({ ...getStore(), estado: estado.mood_tag });
 
 					return true;
 				} catch (error) {
@@ -216,7 +216,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("Error loading message from backend", error)
 				}
 			},
-			mensajePersonalizado: async(mood_tag) => {
+			mensajePersonalizado: async (mood_tag) => {
 				try {
 					setStore({ ...getStore(), loadingMensajeIA: true, mensajeIA: null });
 					const token = sessionStorage.getItem("token");
@@ -230,7 +230,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						body: JSON.stringify({ mood_tag })
 					});
 					const data = await resp.json();
-					setStore({ ...getStore(), mensajeIA: data.advice, loadingMensajeIA: false  });
+					setStore({ ...getStore(), mensajeIA: data.advice, loadingMensajeIA: false });
 					return true
 				}
 				catch (error) {
@@ -262,7 +262,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return true;
 				} catch (error) {
 					console.log("Error loading message from backend", error)
-					setStore({ ...getStore(), loadingFraseMotivacionalIA: false});
+					setStore({ ...getStore(), loadingFraseMotivacionalIA: false });
 				}
 			},
 			frasesMotivacionales: async () => {
@@ -285,7 +285,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return true;
 				} catch (error) {
 					console.log("Error loading message from backend", error)
-					setStore({ ...getStore(), loadingFrasesMotivacionalesIA: false});
+					setStore({ ...getStore(), loadingFrasesMotivacionalesIA: false });
 				}
 			},
 			guardarFraseFavorita: async (frase) => {
@@ -297,7 +297,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 							"Authorization": "Bearer " + token,
 							"Content-Type": "application/json"
 						},
-						body: JSON.stringify({"quote_text":frase.quote, "author":frase.author})
+						body: JSON.stringify({ "quote_text": frase.quote, "author": frase.author })
 					});
 
 					if (!resp.ok) {
@@ -307,12 +307,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 					const yaExiste = store.favoritos.some(
 						fav => fav.quote === nuevoFavorito.quote && fav.author === nuevoFavorito.author
-					  );
-					
-					  if (yaExiste) {
+					);
+
+					if (yaExiste) {
 						alert("Esta frase ya está en tus favoritos.");
 						return;
-					  }
+					}
 
 					setStore({ ...getStore(), favoritos: data });
 					return true;
@@ -343,7 +343,85 @@ const getState = ({ getStore, getActions, setStore }) => {
 				catch (error) {
 					console.log("Error loading message from backend", error)
 				}
+			},
+			reestablecerContrasena: async (user_id) => {
+				try {
+					const token = sessionStorage.getItem("token");
+					const resp = await fetch(process.env.BACKEND_URL + "api/admin/force-reset-password", {
+						method: "PATCH",
+						headers: {
+							"Content-Type": "application/json",
+							"authorization": "Bearer " + token
+						},
+						body: JSON.stringify({ "user_id": user_id })
+					});
+					if (!resp.ok) {
+						throw new Error("Error, token no es correcto");
+					}
+				}
+				catch (error) {
+					console.log("Error loading message from backend", error)
+				}
+			},
+			suspenderReactivarUsuario: async (user_id) => {
+				try {
+					const token = sessionStorage.getItem("token");
+					const resp = await fetch(process.env.BACKEND_URL + "api/admin/suspender-activar-user", {
+						method: "PATCH",
+						headers: {
+							"Content-Type": "application/json",
+							"authorization": "Bearer " + token
+						},
+						body: JSON.stringify({ "user_id": user_id })
+					});
+					if (!resp.ok) {
+						throw new Error("Error, token no es correcto");
+					}
+				}
+				catch (error) {
+					console.log("Error loading message from backend", error)
+				}
+			},
+			modificarIsAdmin: async (user_id) => {
+				try {
+					const token = sessionStorage.getItem("token");
+					const resp = await fetch(process.env.BACKEND_URL + "api/admin/hacer-deshacer-admin", {
+						method: "PATCH",
+						headers: {
+							"Content-Type": "application/json",
+							"authorization": "Bearer " + token
+						},
+						body: JSON.stringify({ "user_id": user_id })
+					});
+					if (!resp.ok) {
+						throw new Error("Error, token no es correcto");
+					}
+				}
+				catch (error) {
+					console.log("Error loading message from backend", error)
+				}
+			},
+			cambiarContrasena: async (newPassword, user_id) => {
+				try {
+					const token = sessionStorage.getItem("token");
+					const resp = await fetch(process.env.BACKEND_URL + "api/user/change-password", {
+						method: "PATCH",
+						headers: {
+							"Content-Type": "application/json",
+							"authorization": "Bearer " + token
+						},
+						body: JSON.stringify({ "new_password": newPassword, "user_id": user_id })
+					});
+					if (!resp.ok) {
+						throw new Error("Error, token no es correcto");
+					}
+					return true;
+				}
+				catch (error) {
+					console.log("Error loading message from backend", error)
+				}
 			}
+
 		}
 	};
 };

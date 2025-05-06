@@ -1,3 +1,18 @@
-/* 
-    General Styles used on every website (Don't Repeat Yourself)
-*/
+.page-title {
+    font-family: 'Poppins', sans-serif; /* Fuente moderna */
+    font-size: 2.5rem; /* Tamaño grande */
+    font-weight: bold; /* Negrita */
+    color: #4CAF50; /* Color verde para transmitir equilibrio */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Sombra para destacar */
+    letter-spacing: 2px; /* Espaciado entre letras */
+    margin: 0; /* Sin margen extra */
+}
+.jumbotron p {
+    line-height: 1.3;
+  }
+.jumbotron {
+    background-color: #f0f0f0; /* Color de fondo claro */
+    padding: 2rem; /* Espaciado interno */
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */    
+}

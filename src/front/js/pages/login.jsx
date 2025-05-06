@@ -2,7 +2,9 @@ import React, { useContext, useState } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
 
+
 const Login = () => {
+    const { store } = useContext(Context);
     const navigate = useNavigate();
     const { actions } = useContext(Context);
     const [email, setEmail] = useState("");
@@ -11,19 +13,35 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (!email || !password) {
             setValidated(true);
             return;
         }
-
         const usuarioCorrecto = await actions.loginUsuario({ email, password });
         if (usuarioCorrecto) {
+            // if (await actions.verificarToken()) {
+
+            //     if (await actions.isAdmin()) {
+            //         navigate("/admin-dashboard");
+            //     } else {
+            //         navigate("/dashboard");
+            //     }   
+            // }
+            if (! await actions.verificarToken()) {
+                return;
+            }
+            if (!store.info?.is_active) {
+                alert("El usuario no está activo");
+                return;
+            }
             if (await actions.isAdmin()) {
                 navigate("/admin-dashboard");
             } else {
                 navigate("/dashboard");
             }
+            
+            
+
         } else {
             alert("Error al loguear el usuario");
         }
