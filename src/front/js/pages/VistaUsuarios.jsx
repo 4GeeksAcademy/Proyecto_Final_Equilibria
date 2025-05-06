@@ -25,18 +25,18 @@ const VistaUsuarios = () => {
 
     const handleFiltrar = (name, email, isAdmin, isActive) => {
         const queryParams = [];
-    
+
         if (name.trim() !== "") queryParams.push(`name=${name.trim()}`);
         if (email.trim() !== "") queryParams.push(`email=${email.trim()}`);
         if (isAdmin !== null && isAdmin !== undefined) queryParams.push(`is_admin=${isAdmin}`);
         if (isActive !== null && isActive !== undefined) queryParams.push(`is_active=${isActive}`);
-    
+
         const queryString = queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
         const fullUrl = `/api/admin/users${queryString}`;
-    
+
         setUrl(fullUrl);
     };
-    
+
 
     useEffect(() => {
         actions.listaFetch(url, seccion);
@@ -53,71 +53,90 @@ const VistaUsuarios = () => {
                     Logout
                 </button>
             </div>
-            <div>
-                filtrar por nombre:
-                <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Nombre de usuario"
-                    value={name}
-                    onChange={(e) => {
-                        setName(e.target.value)
-                    }}
-                />
-                filtrar por email:
-                <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Email de usuario"
-                    value={email}
-                    onChange={(e) => {
-                        setEmail(e.target.value)
-                    }}
-                />
-                filtrar por rol:
-                <select
-                    className="form-select"
-                    onChange={(e) => {
-                        // setCambioEnCondicion(e.target.value);
-                        if (e.target.value === "admin") {
-                            setIsAdmin(true);
-                        } else if (e.target.value === "user") {
-                            setIsAdmin(false);
-                        } else {
-                            setIsAdmin(null);
-                        }
-                        // actions.listaFetch("/api/admin/users", seccion);
-                    }}
-                >
-                    <option value="">Seleccionar rol</option>
-                    <option value="admin">Administrador</option>
-                    <option value="user">Usuario</option>
-                </select>
-                filtrar por estado:
-                <select
-                    className="form-select"
-                    onChange={(e) => {
-                        // setCambioEnCondicion(e.target.value);
-                        if (e.target.value === "active") {
-                            setIsActive(true);
-                        } else if (e.target.value === "inactive") {
-                            setIsActive(false);
-                        } else {
-                            setIsActive(null);
-                        }
-                        // actions.listaFetch("/api/admin/users", seccion);
-                    }}
-                >
-                    <option value="">Seleccionar estado</option>
-                    <option value="active">Activo</option>
-                    <option value="inactive">Inactivo</option>
-                </select>
-                <button
-                    className="btn btn-primary mt-2"
-                    onClick={() => handleFiltrar(name, email, isAdmin, isActive)}
-                >
-                    Filtrar
-                </button>
+            <div className="d-flex py-3 justify-content-between">
+                <div className="mx-1">
+                    <label htmlFor="">filtrar por nombre:</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Nombre de usuario"
+                        value={name}
+                        onChange={(e) => {
+                            setName(e.target.value)
+                        }}
+                    />
+
+                </div>
+                <div className="mx-1">
+                    <label htmlFor="">
+                        filtrar por email:
+                    </label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Email de usuario"
+                        value={email}
+                        onChange={(e) => {
+                            setEmail(e.target.value)
+                        }}
+                    />
+
+                </div>
+                <div className="mx-1">
+                    <label htmlFor="">
+                        filtrar por rol:
+                    </label>
+                    <select
+                        className="form-select"
+                        onChange={(e) => {
+                            // setCambioEnCondicion(e.target.value);
+                            if (e.target.value === "admin") {
+                                setIsAdmin(true);
+                            } else if (e.target.value === "user") {
+                                setIsAdmin(false);
+                            } else {
+                                setIsAdmin(null);
+                            }
+                            // actions.listaFetch("/api/admin/users", seccion);
+                        }}
+                    >
+                        <option value="">Seleccionar rol</option>
+                        <option value="admin">Administrador</option>
+                        <option value="user">Usuario</option>
+                    </select>
+
+                </div>
+                <div className="mx-1">
+                    <label htmlFor="">
+                        filtrar por estado:
+                    </label>
+                    <select
+                        className="form-select"
+                        onChange={(e) => {
+                            // setCambioEnCondicion(e.target.value);
+                            if (e.target.value === "active") {
+                                setIsActive(true);
+                            } else if (e.target.value === "inactive") {
+                                setIsActive(false);
+                            } else {
+                                setIsActive(null);
+                            }
+                            // actions.listaFetch("/api/admin/users", seccion);
+                        }}
+                    >
+                        <option value="">Seleccionar estado</option>
+                        <option value="active">Activo</option>
+                        <option value="inactive">Inactivo</option>
+                    </select>
+                </div>
+                <div className="d-flex align-items-end">
+                    <button
+                        className="btn btn-primary"
+                        onClick={() => handleFiltrar(name, email, isAdmin, isActive)}
+                    >
+                        Filtrar
+                    </button>
+                </div>
             </div>
             <div>
                 {store.listaUsuarios && store.listaUsuarios.length > 0 ? (
@@ -148,7 +167,7 @@ const VistaUsuarios = () => {
                                         className="btn btn-primary mx-2 bg-warning"
                                         onClick={() => {
                                             actions.reestablecerContrasena(usuario.id)
-                                            .then(() => actions.listaFetch(url, seccion))
+                                                .then(() => actions.listaFetch(url, seccion))
                                         }}
                                     >
                                         Reestablecer contraseña
@@ -157,7 +176,7 @@ const VistaUsuarios = () => {
                                         className="btn btn-primary mx-2"
                                         onClick={() => {
                                             actions.suspenderReactivarUsuario(usuario.id)
-                                            .then(() => actions.listaFetch(url, seccion))
+                                                .then(() => actions.listaFetch(url, seccion))
                                         }}
                                     >
                                         Suspender/Reactivar
@@ -166,7 +185,7 @@ const VistaUsuarios = () => {
                                         className="btn btn-primary mx-2 bg-danger"
                                         onClick={() => {
                                             actions.modificarIsAdmin(usuario.id)
-                                            .then(() => actions.listaFetch(url, seccion))
+                                                .then(() => actions.listaFetch(url, seccion))
                                         }}
                                     >
                                         Hacer/Quitar Admin
