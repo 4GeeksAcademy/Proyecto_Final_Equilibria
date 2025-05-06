@@ -96,6 +96,30 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				}
 			},
+			adminSignup: async (userData) => {
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + "api/signup-admin", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify(userData)
+					})
+
+					if (!resp.ok) {
+						console.log(resp)
+						throw new Error("Something went wronggg");
+					}
+
+					let data = await resp.json()
+
+					return data
+
+				} catch (error) {
+					console.log("Something went wrong:", error)
+
+				}
+			},
 			verificarToken: async () => {
 				try {
 					// fetching data from the backend

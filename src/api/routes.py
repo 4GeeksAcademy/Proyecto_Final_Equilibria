@@ -350,6 +350,32 @@ El resultado debe estar 100% en formato JSON válido.
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
+@api.route('/signup-admin', methods=['POST'])
+# @jwt_required()
+def create_admin():
+    try:
+        email = request.json.get('email')
+        password = request.json.get('password')
+        name = request.json.get('name')
+        gender= request.json.get('gender')
+        is_admin = request.json.get('is_admin', True) in [True, "true", "True"]
+        if not email or not password or not name :
+            return jsonify({'e': 'Email, Password and Name are required.'}), 400
+        
+        existe_usuario= User.query.filter_by(email=email).first()
+        
+        if existe_usuario:
+            return jsonify({'error': 'email already exists'})
+        
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        new_user = User(email=email, password=hashed_password, name=name, is_admin=is_admin, gender=gender)   
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({'message': 'User created successfully'}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
 @api.route('/admin/users', methods=['GET'])
 @jwt_required()
 def get_all_users():

@@ -10,7 +10,10 @@ const AdminDashboard = () => {
     const handleNavigate = (path) => {
         navigate(path);
     };
-
+    
+    const handleNewAdmin = () => {
+        navigate('/signup-admin')
+    }
     const handleLogout = () => {
         actions.logout();
         navigate("/");
@@ -100,6 +103,9 @@ const AdminDashboard = () => {
                 <div>
                     <button className="btn btn-primary mx-2 " onClick={() => handleNavigate("/vista-usuarios")}>
                         Ver usuarios
+                    </button>
+                    <button className="btn btn-warning mx-2 " onClick={handleNewAdmin}>
+                        Crear nuevo admin
                     </button>
                 </div>
             </div>
