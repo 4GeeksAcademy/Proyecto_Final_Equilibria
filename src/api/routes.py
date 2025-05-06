@@ -314,11 +314,13 @@ Devuélvelas únicamente como un arreglo JSON con el siguiente formato:
         "type": "Tipo de contenido (película, serie, ejercicio, podcast, libro, etc.)",
         "title": "Título o nombre de la recomendación",
         "description": "Descripción breve y clara de la recomendación"
+        "url": "URL de la recomendación (si corresponde, de lo contrario, dejar vacío)"
     }},
     {{
         "type": "Tipo de contenido (película, serie, ejercicio, podcast, libro, etc.)",
         "title": "Título o nombre de la recomendación",
         "description": "Descripción breve y clara de la recomendación"
+        "url": "URL de la recomendación (si corresponde, de lo contrario, dejar vacío)"
     }}
 ]
 
@@ -361,9 +363,21 @@ def get_all_users():
 
         name_filter = request.args.get('name', None)
         email_filter = request.args.get('email', None)
+        is_admin_filter = request.args.get('is_admin', None)
+        is_active_filter = request.args.get('is_active', None)
+        
 
         query = User.query
-
+        if is_admin_filter:
+            if is_admin_filter.lower() == "true":
+                query = query.filter(User.is_admin.is_(True))
+            elif is_admin_filter.lower() == "false":
+                query = query.filter(User.is_admin.is_(False))
+        if is_active_filter:
+            if is_active_filter.lower() == "true":
+                query = query.filter(User.is_active.is_(True))
+            elif is_active_filter.lower() == "false":
+                query = query.filter(User.is_active.is_(False))
         if name_filter:
             query = query.filter(User.name.ilike(f"%{name_filter}%"))
         if email_filter:
@@ -373,6 +387,100 @@ def get_all_users():
         users_list = [user.serialize() for user in users]
 
         return jsonify(users_list), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@api.route('/admin/force-reset-password', methods=['PATCH'])
+@jwt_required() 
+def force_reset_password():
+    try:
+        current_user = get_jwt_identity()
+        user = User.query.get(current_user)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        if not user.is_admin:
+            return jsonify({'error': 'Unauthorized access'}), 403
+        user_id = request.json.get('user_id')
+        if not user_id:
+            return jsonify({'error': 'User ID is required'}), 400
+        user_to_reset = User.query.get(user_id)
+        if not user_to_reset:
+            return jsonify({'error': 'User not found'}), 404
+        user_to_reset.force_password_change = True
+        db.session.commit()
+        return jsonify({'message': 'Password reset forced successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+    
+ 
+@api.route('/user/change-password', methods=['PATCH'])
+@jwt_required()
+def change_password():
+    try:
+        current_user = get_jwt_identity()
+        user = User.query.get(current_user)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        user_id = request.json.get('user_id')
+        new_password = request.json.get('new_password')
+        if not user_id or not new_password:
+            return jsonify({'error': 'User ID and new password are required'}), 400
+        user_to_change = User.query.get(user_id)
+        if not user_to_change:
+            return jsonify({'error': 'User not found'}), 404
+        user_to_change.force_password_change = False
+        hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+        user_to_change.password = hashed_password
+        db.session.commit()
+        return jsonify({'message': 'Password changed successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@api.route('/admin/suspender-activar-user', methods=['PATCH'])
+@jwt_required() 
+def suspender_activar_user():
+    try:
+        current_user = get_jwt_identity()
+        user = User.query.get(current_user)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        if not user.is_admin:
+            return jsonify({'error': 'Unauthorized access'}), 403
+        user_id = request.json.get('user_id')
+        if not user_id:
+            return jsonify({'error': 'User ID is required'}), 400
+        user_to_change = User.query.get(user_id)
+        if not user_to_change:
+            return jsonify({'error': 'User not found'}), 404
+        user_to_change.is_active = not user_to_change.is_active
+        db.session.commit()
+        return jsonify({'message': 'tarea lograda con exito'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@api.route('/admin/hacer-deshacer-admin', methods=['PATCH'])
+@jwt_required()
+def make_remove_admin():
+    try:
+        current_user = get_jwt_identity()
+        user = User.query.get(current_user)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        if not user.is_admin:
+            return jsonify({'error': 'Unauthorized access'}), 403
+        user_id = request.json.get('user_id')
+        if not user_id:
+            return jsonify({'error': 'User ID is required'}), 400
+        user_to_admin = User.query.get(user_id)
+        if not user_to_admin:
+            return jsonify({'error': 'User not found'}), 404
+        user_to_admin.is_admin = not user_to_admin.is_admin
+        db.session.commit()
+        return jsonify({'message': 'tarea lograda con exito'}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500

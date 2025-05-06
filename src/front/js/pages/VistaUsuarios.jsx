@@ -8,8 +8,11 @@ const VistaUsuarios = () => {
     const navigate = useNavigate();
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
+    const [isAdmin, setIsAdmin] = useState(null);
+    const [isActive, setIsActive] = useState(null);
     const [url, setUrl] = useState("/api/admin/users");
-
+    const [seccion, setSeccion] = useState("listaUsuarios");
+    // const [cambioEnCondicion, setCambioEnCondicion] = useState(false);
 
     const handleNavigate = (path) => {
         navigate(path);
@@ -20,26 +23,29 @@ const VistaUsuarios = () => {
         navigate("/");
     };
 
-    const handleFiltrar = (name, email) => {
-        if (name.trim() === "" && email.trim() === "") {
-             setUrl("/api/admin/users");
-        } else if (name.trim() !== "" && email.trim() === "") {
-             setUrl(`/api/admin/users?name=${name}`);
-        } else if (name.trim() === "" && email.trim() !== "") {
-             setUrl(`/api/admin/users?email=${email}`);
-        } else {
-             setUrl(`/api/admin/users?name=${name}&email=${email}`);
-        }
-    }
+    const handleFiltrar = (name, email, isAdmin, isActive) => {
+        const queryParams = [];
+    
+        if (name.trim() !== "") queryParams.push(`name=${name.trim()}`);
+        if (email.trim() !== "") queryParams.push(`email=${email.trim()}`);
+        if (isAdmin !== null && isAdmin !== undefined) queryParams.push(`is_admin=${isAdmin}`);
+        if (isActive !== null && isActive !== undefined) queryParams.push(`is_active=${isActive}`);
+    
+        const queryString = queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
+        const fullUrl = `/api/admin/users${queryString}`;
+    
+        setUrl(fullUrl);
+    };
+    
 
     useEffect(() => {
-        const seccion = "listaUsuarios";
         actions.listaFetch(url, seccion);
     }, [url]);
 
+
     return (
         <div className="container d-flex flex-column align-items-center">
-            <div className="w-100 d-flex justify-content-between p-3 ">
+            <div className="w-100 d-flex justify-content-between p-3">
                 <button className="btn btn-secondary" onClick={() => handleNavigate("/admin-dashboard")}>
                     Regresar al Dashboard
                 </button>
@@ -54,7 +60,9 @@ const VistaUsuarios = () => {
                     className="form-control"
                     placeholder="Nombre de usuario"
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => {
+                        setName(e.target.value)
+                    }}
                 />
                 filtrar por email:
                 <input
@@ -62,11 +70,51 @@ const VistaUsuarios = () => {
                     className="form-control"
                     placeholder="Email de usuario"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                        setEmail(e.target.value)
+                    }}
                 />
+                filtrar por rol:
+                <select
+                    className="form-select"
+                    onChange={(e) => {
+                        // setCambioEnCondicion(e.target.value);
+                        if (e.target.value === "admin") {
+                            setIsAdmin(true);
+                        } else if (e.target.value === "user") {
+                            setIsAdmin(false);
+                        } else {
+                            setIsAdmin(null);
+                        }
+                        // actions.listaFetch("/api/admin/users", seccion);
+                    }}
+                >
+                    <option value="">Seleccionar rol</option>
+                    <option value="admin">Administrador</option>
+                    <option value="user">Usuario</option>
+                </select>
+                filtrar por estado:
+                <select
+                    className="form-select"
+                    onChange={(e) => {
+                        // setCambioEnCondicion(e.target.value);
+                        if (e.target.value === "active") {
+                            setIsActive(true);
+                        } else if (e.target.value === "inactive") {
+                            setIsActive(false);
+                        } else {
+                            setIsActive(null);
+                        }
+                        // actions.listaFetch("/api/admin/users", seccion);
+                    }}
+                >
+                    <option value="">Seleccionar estado</option>
+                    <option value="active">Activo</option>
+                    <option value="inactive">Inactivo</option>
+                </select>
                 <button
                     className="btn btn-primary mt-2"
-                    onClick={() => handleFiltrar(name, email)}
+                    onClick={() => handleFiltrar(name, email, isAdmin, isActive)}
                 >
                     Filtrar
                 </button>
@@ -74,16 +122,56 @@ const VistaUsuarios = () => {
             <div>
                 {store.listaUsuarios && store.listaUsuarios.length > 0 ? (
                     store.listaUsuarios.map((usuario, index) => (
-                        <div key={index} className="card mb-3">
-                            <div className="card-body">
-                                <h5 className="card-title">{usuario.username}</h5>
-                                <p className="card-text">{usuario.email}</p>
-                                <button
-                                    className="btn btn-danger"
-                                    onClick={() => actions.eliminarUsuario(usuario.id)}
-                                >
-                                    Eliminar Usuario
-                                </button>
+                        <div key={index} className="col">
+                            <div className="card pb-3">
+                                <div className="card-body">
+                                    <h5 className="card-title">{usuario.name}</h5>
+                                    <p className="card-text">{usuario.email}</p>
+                                    <p className="card-text">{usuario.is_active ? (
+                                        <span className="text-success">Activo</span>
+                                    ) : (
+                                        <span className="text-danger">Suspendido</span>
+                                    )}</p>
+                                    <p className="card-text">{usuario.is_admin ? (
+                                        <span className="text-primary">Administrador</span>
+                                    ) : (
+                                        <span className="text-secondary">Usuario</span>
+                                    )}</p>
+                                    <p className="card-text">{usuario.force_password_change !== null ? (
+                                        <span className="text-success">Verificado</span>
+                                    ) : (
+                                        <span className="text-danger">No verificado</span>
+                                    )}</p>
+                                </div>
+                                <div className="buttons">
+                                    <button
+                                        className="btn btn-primary mx-2 bg-warning"
+                                        onClick={() => {
+                                            actions.reestablecerContrasena(usuario.id)
+                                            .then(() => actions.listaFetch(url, seccion))
+                                        }}
+                                    >
+                                        Reestablecer contraseña
+                                    </button>
+                                    <button
+                                        className="btn btn-primary mx-2"
+                                        onClick={() => {
+                                            actions.suspenderReactivarUsuario(usuario.id)
+                                            .then(() => actions.listaFetch(url, seccion))
+                                        }}
+                                    >
+                                        Suspender/Reactivar
+                                    </button>
+                                    <button
+                                        className="btn btn-primary mx-2 bg-danger"
+                                        onClick={() => {
+                                            actions.modificarIsAdmin(usuario.id)
+                                            .then(() => actions.listaFetch(url, seccion))
+                                        }}
+                                    >
+                                        Hacer/Quitar Admin
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     ))
@@ -93,5 +181,6 @@ const VistaUsuarios = () => {
             </div>
         </div>
     );
-}
+};
+
 export default VistaUsuarios;
