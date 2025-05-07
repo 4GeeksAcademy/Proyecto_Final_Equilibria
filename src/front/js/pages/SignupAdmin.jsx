@@ -43,6 +43,7 @@ const SignupAdmin = () => {
 
         const userAvailable = await actions.adminSignup({ email, password, name, gender })
 
+        
         if (userAvailable) {
             alert("User created successfully")
             navigate("/")
