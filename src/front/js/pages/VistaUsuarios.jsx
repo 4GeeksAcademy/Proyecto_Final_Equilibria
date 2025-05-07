@@ -138,12 +138,12 @@ const VistaUsuarios = () => {
                     </button>
                 </div>
             </div>
-            <div>
+            <div className="d-flex row">
                 {store.listaUsuarios && store.listaUsuarios.length > 0 ? (
                     store.listaUsuarios.map((usuario, index) => (
-                        <div key={index} className="col">
-                            <div className="card pb-3">
-                                <div className="card-body">
+                        <div key={index} className="col-6 ">
+                            <div className="p-3 m-2 d-flex text-center rounded" style={{ boxShadow: '0px 0px 15px rgba(0, 0, 0, 0.31)' }}>
+                                <div className="col-6">
                                     <h5 className="card-title">{usuario.name}</h5>
                                     <p className="card-text">{usuario.email}</p>
                                     <p className="card-text">{usuario.is_active ? (
@@ -162,9 +162,9 @@ const VistaUsuarios = () => {
                                         <span className="text-danger">No verificado</span>
                                     )}</p>
                                 </div>
-                                <div className="buttons">
+                                <div className="buttons d-flex flex-column col-6 justify-content-between px-1">
                                     <button
-                                        className="btn btn-primary mx-2 bg-warning"
+                                        className="btn btn-primary my-1 bg-warning"
                                         onClick={() => {
                                             actions.reestablecerContrasena(usuario.id)
                                                 .then(() => actions.listaFetch(url, seccion))
@@ -173,22 +173,22 @@ const VistaUsuarios = () => {
                                         Reestablecer contraseña
                                     </button>
                                     <button
-                                        className="btn btn-primary mx-2"
+                                        className="btn btn-primary my-1"
                                         onClick={() => {
                                             actions.suspenderReactivarUsuario(usuario.id)
                                                 .then(() => actions.listaFetch(url, seccion))
                                         }}
                                     >
-                                        Suspender/Reactivar
+                                        {usuario.is_active ? 'Suspender' : 'Reactivar'}
                                     </button>
                                     <button
-                                        className="btn btn-primary mx-2 bg-danger"
+                                        className="btn btn-primary my-1 bg-danger"
                                         onClick={() => {
                                             actions.modificarIsAdmin(usuario.id)
                                                 .then(() => actions.listaFetch(url, seccion))
                                         }}
                                     >
-                                        Hacer/Quitar Admin
+                                        {usuario.is_admin ? 'Quitar admin' : 'Hacer admin'}
                                     </button>
                                 </div>
                             </div>
