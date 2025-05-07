@@ -80,10 +80,6 @@ const SignupAdmin = () => {
                     <label htmlFor="exampleInputPassword1" className="form-label">Password</label>
                     <input onChange={handlePassword} type="password" className="form-control" id="exampleInputPassword1" />
                 </div>
-                <div className="form-check form-check-inline">
-                    <input className="form-check-input" type="radio" name="inlineRadioOptionAdmin" id="inlineRadio3" value="admin" checked readOnly/>
-                    <label className="form-check-label" htmlFor="inlineRadio3" >Admin</label>
-                </div>
                 <div className="py-3">
                     <button onClick={handleSubmit} className="btn btn-primary mx-2">Enviar</button>
                     <button onClick={() => {navigate('/admin-dashboard')}} className="btn btn-primary mx-2">Regresar</button>

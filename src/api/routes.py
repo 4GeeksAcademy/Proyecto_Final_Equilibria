@@ -358,7 +358,7 @@ def create_admin():
         password = request.json.get('password')
         name = request.json.get('name')
         gender= request.json.get('gender')
-        is_admin = request.json.get('is_admin', True) in [True, "true", "True"]
+        is_admin = request.json.get('is_admin', True)
         if not email or not password or not name :
             return jsonify({'e': 'Email, Password and Name are required.'}), 400
         
