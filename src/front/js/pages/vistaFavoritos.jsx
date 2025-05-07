@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useContext } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const VistaFavoritos = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
-
+    
     const handleNavigate = (path) => {
         navigate(path);
     };
@@ -16,12 +16,10 @@ const VistaFavoritos = () => {
         navigate("/");
     };
 
-    
-    useEffect(() => {
-        const url = "api/favorite-quotes";
-        const seccion = "favoritos";
-        actions.listaFetch(url, seccion);
-    }, [store.favoritos]);
+    const handlerEliminirFavorito = async (id) => {
+        await actions.eliminarFavorito(id, "quotes");
+        actions.setStore("quotes", id)
+    }
 
     return (
         <div className="container mt-5">
@@ -29,9 +27,9 @@ const VistaFavoritos = () => {
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <button
                     className="btn btn-secondary shadow-sm"
-                    onClick={() => handleNavigate("/dashboard")}
+                    onClick={() => handleNavigate("/favoritos")}
                 >
-                    Regresar al Dashboard
+                    Regresar a favoritos
                 </button>
                 <button
                     className="btn btn-danger shadow-sm"
@@ -46,9 +44,9 @@ const VistaFavoritos = () => {
             <p className="text-center text-muted">Aquí puedes ver y gestionar tus frases favoritas.</p>
 
             {/* Favoritos */}
-            {store.favoritos && store.favoritos.length > 0 ? (
+            {store.favoritos.quotes && store.favoritos.quotes.length > 0 ? (
                 <div className="row g-4">
-                    {store.favoritos.map((favorito, index) => (
+                    {store.favoritos?.quotes?.map((favorito, index) => (
                         <div key={index} className="col-md-6 col-lg-4">
                             <div className="card shadow-sm border-0">
                                 <div className="card-body">
@@ -56,7 +54,9 @@ const VistaFavoritos = () => {
                                     <p className="card-text text-muted">- {favorito.author}</p>
                                     <button
                                         className="btn btn-danger w-100"
-                                        onClick={() => actions.eliminarFavorito(favorito.id)}
+                                        onClick={() => {
+                                            handlerEliminirFavorito(favorito.id);
+                                        }}
                                     >
                                         Eliminar de Favoritos
                                     </button>

@@ -1,3 +1,5 @@
+import { element } from "prop-types";
+
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
@@ -8,7 +10,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 			mensajeIA: null, // Mensaje generado por IA
 			message: null, // Mensaje genérico
 			estado: null, // Estado de ánimo del usuario
-			favoritos: [], // Lista de favoritos
+			favoritos: {
+				quotes: null, // Frases favoritas
+				movies: null, // Películas favoritas
+				series: null, // Series favoritas
+				podcasts: null, // Podcasts favoritos
+				books: null, // Libros favoritos
+				exercises: null // Ejercicios favoritos
+			}, // Lista de favoritos
 			demo: [
 				{
 					title: "FIRST",
@@ -172,14 +181,60 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("Error loading message from backend", error);
 				}
 			},
-			eliminarFavorito: async (id) => {
+			fetchFavoritos: async (url) => {
 				try {
 					const token = sessionStorage.getItem("token");
-					const resp = await fetch(process.env.BACKEND_URL + "api/favorite-quotes/" + id, {
-						method: "DELETE",
+					const resp = await fetch(process.env.BACKEND_URL + url, {
+						method: "GET",
 						headers: {
 							"Authorization": "Bearer " + token
 						}
+					});
+
+					if (!resp.ok) {
+						throw new Error("Error, token no es correcto");
+					}
+					let data = await resp.json();
+					const favoritos = {
+						quotes: [],
+						movies: [],
+						series: [],
+						podcasts: [],
+						books: [],
+						exercises: []
+					};
+			
+					for (const ele of data) {
+						if (ele.type === "quote") {
+							favoritos.quotes.push(ele);
+						} else if (ele.type === "Película") {
+							favoritos.movies.push(ele);
+						} else if (ele.type === "Serie") {
+							favoritos.series.push(ele);
+						} else if (ele.type === "Podcast") {
+							favoritos.podcasts.push(ele);
+						} else if (ele.type === "Libro") {
+							favoritos.books.push(ele);
+						} else if (ele.type === "Ejercicio") {
+							favoritos.exercises.push(ele);
+						}
+					}
+					setStore({ ...getStore(), favoritos });
+					return true;
+				} catch (error) {
+					console.log("Error loading message from backend", error);
+				}
+			},
+			eliminarFavorito: async (id, type) => {
+				try {
+					const token = sessionStorage.getItem("token");
+					const resp = await fetch(process.env.BACKEND_URL + "api/favorite-del", {
+						method: "DELETE",
+						headers: {
+							"Content-Type": "application/json",
+							"Authorization": "Bearer " + token
+						},
+						body: JSON.stringify({ "favorite_id": id })
 					});
 
 					if (!resp.ok) {
@@ -188,8 +243,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 					let data = await resp.json();
 
-					setStore({ ...getStore(), favoritos: data });
-					alert('Favorite quote successfully deleted!')
+					// setStore({ ...getStore(), [type]: data });
 					return true;
 				} catch (error) {
 					console.log("Error loading message from backend", error);
@@ -312,31 +366,23 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ ...getStore(), loadingFrasesMotivacionalesIA: false });
 				}
 			},
-			guardarFraseFavorita: async (frase) => {
+			guardarFavorito: async (favorito) => {
 				try {
 					const token = sessionStorage.getItem("token");
-					const resp = await fetch(process.env.BACKEND_URL + "api/favorite-quotes", {
+					const resp = await fetch(process.env.BACKEND_URL + "api/favorite", {
 						method: "POST",
 						headers: {
 							"Authorization": "Bearer " + token,
 							"Content-Type": "application/json"
 						},
-						body: JSON.stringify({ "quote_text": frase.quote, "author": frase.author })
-					});
+						body: JSON.stringify(favorito)
+
+						 });
 
 					if (!resp.ok) {
 						throw new Error("Error, token no es correcto");
 					}
 					let data = await resp.json();
-
-					const yaExiste = store.favoritos.some(
-						fav => fav.quote === nuevoFavorito.quote && fav.author === nuevoFavorito.author
-					);
-
-					if (yaExiste) {
-						alert("Esta frase ya está en tus favoritos.");
-						return;
-					}
 
 					setStore({ ...getStore(), favoritos: data });
 					return true;
@@ -444,7 +490,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				catch (error) {
 					console.log("Error loading message from backend", error)
 				}
-			}
+			},
+			setStore: (seccion, favorito_id) => {
+				let store = getStore();
+				store.favoritos[seccion] = store.favoritos[seccion].filter((item) => item.id !== favorito_id);
+				setStore({ ...getStore(), [seccion] : store.favoritos[seccion] });
+			},
 
 		}
 	};
