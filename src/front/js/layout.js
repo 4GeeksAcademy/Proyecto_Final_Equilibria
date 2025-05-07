@@ -21,6 +21,7 @@ import Diario from "./pages/Diario.jsx";
 import  FrasesMotivacionales  from "./pages/FrasesMotivacionales.jsx";
 import Recomendaciones from "./pages/Recomendaciones.jsx";
 import SignupAdmin from "./pages/SignupAdmin.jsx";
+import Favoritos from "./pages/Favoritos.jsx";
 
 
 //create your first component
@@ -39,6 +40,7 @@ const Layout = () => {
                         <Route element={<Login />} path="/" />
                         <Route element={<Signup />} path="/signup" />
                         <Route element={<SignupAdmin />} path="/signup-admin" />
+                        <Route element={<Favoritos />} path="/favoritos" />
                         <Route element={<Diario />} path="/diario" />
                         <Route element={<Dashboard />} path="/dashboard" />
                         <Route element={<AdminDashboard />} path="/admin-dashboard" />
