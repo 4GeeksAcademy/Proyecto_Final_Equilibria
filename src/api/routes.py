@@ -113,18 +113,42 @@ def handle_favorite_quotes():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@api.route('/favorite-quotes', methods=['POST'])
+# @api.route('/favorite-quotes', methods=['POST'])
+# @jwt_required()
+# def handle_create_favorite_quote():
+#     try:
+#         current_user = get_jwt_identity()
+#         quote_text = request.json.get('quote_text')
+#         author = request.json.get('author')
+
+#         if not quote_text or not author:
+#             return jsonify({'error': 'Quote text and author are required'}), 400
+
+#         new_favorite = FavoriteQuote(user_id=current_user, quote_text=quote_text, author=author)
+#         db.session.add(new_favorite)
+#         db.session.commit()
+
+#         return jsonify(new_favorite.serialize()), 201
+#     except Exception as e:
+#         db.session.rollback()
+#         return jsonify({'error': str(e)}), 500
+
+@api.route('/favorite', methods=['POST'])
 @jwt_required()
-def handle_create_favorite_quote():
+def create_favorite_quote():
     try:
         current_user = get_jwt_identity()
-        quote_text = request.json.get('quote_text')
-        author = request.json.get('author')
+        type = request.json.get('type', '')
+        quote_text = request.json.get('quote_text', '')
+        author = request.json.get('author', '')
+        title = request.json.get('title', '')
+        description = request.json.get('description', '')
+        url = request.json.get('url', '')
 
-        if not quote_text or not author:
-            return jsonify({'error': 'Quote text and author are required'}), 400
+        if not type or not quote_text or not author:
+            return jsonify({'error': 'Type, quote text and author are required'}), 400
 
-        new_favorite = FavoriteQuote(user_id=current_user, quote_text=quote_text, author=author)
+        new_favorite = FavoriteQuote(user_id=current_user, type=type, quote_text=quote_text, author=author, title=title, description=description, url=url)
         db.session.add(new_favorite)
         db.session.commit()
 
@@ -133,10 +157,14 @@ def handle_create_favorite_quote():
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
-@api.route('/favorite-quotes/<int:favorite_id>', methods=['DELETE'])
+@api.route('/favorite-del', methods=['DELETE'])
 @jwt_required()
-def delete_favorite_quote(favorite_id):
+def delete_favorite_quote():
     try:
+        favorite_id = request.json.get('favorite_id')
+        # type= request.json.get('type')
+        if not favorite_id:
+            return jsonify({'error': 'Favorite ID or type is required'}), 400
         current_user = get_jwt_identity()
         favorite_to_delete = FavoriteQuote.query.filter_by(id=favorite_id, user_id=current_user).first()
 
@@ -227,8 +255,8 @@ def get_quote():
 Genera una frase motivacional breve y poderosa junto con su autor. Devuélvela únicamente como un JSON con las siguientes claves:
 
 {
-  "quote": "Tu frase aquí",
-  "author": "Nombre del autor"
+    "quote": "Tu frase aquí",
+    "author": "Nombre del autor"
 }
 
 Evita rodeos, explicaciones o texto adicional. El resultado debe estar 100% en formato JSON válido. No inventes autores si no los conocés.
@@ -311,16 +339,16 @@ Las recomendaciones pueden incluir películas, series, ejercicios de respiració
 Devuélvelas únicamente como un arreglo JSON con el siguiente formato:
 [
     {{
-        "type": "Tipo de contenido (película, serie, ejercicio, podcast, libro, etc.)",
+        "type": "Tipo de contenido (película, serie, ejercicio, podcast, libro)(solo las opciones que se mencionan)",
         "title": "Título o nombre de la recomendación",
         "description": "Descripción breve y clara de la recomendación"
-        "url": "URL de la recomendación (si corresponde, de lo contrario, dejar vacío)"
+        "url": "URL de la recomendación (si corresponde, de lo contrario, poner N/A)"
     }},
     {{
-        "type": "Tipo de contenido (película, serie, ejercicio, podcast, libro, etc.)",
+        "type": "Tipo de contenido (película, serie, ejercicio, podcast, libro)(solo las opciones que se mencionan)",
         "title": "Título o nombre de la recomendación",
         "description": "Descripción breve y clara de la recomendación"
-        "url": "URL de la recomendación (si corresponde, de lo contrario, dejar vacío)"
+        "url": "URL de la recomendación (si corresponde, de lo contrario, poner N/A)"
     }}
 ]
 

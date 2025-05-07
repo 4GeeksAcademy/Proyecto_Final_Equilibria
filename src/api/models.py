@@ -55,9 +55,14 @@ class FavoriteQuote(db.Model):
     __tablename__ = 'favorite_quote'
 
     id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(50), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     quote_text = db.Column(db.Text, nullable=False)
-    author = db.Column(db.String(255), nullable=True)
+    author = db.Column(db.String(255), nullable=False)
+    title = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    url = db.Column(db.String(255), nullable=False)
+
 
     user = db.relationship('User', back_populates='favorite_quotes')
 
@@ -67,4 +72,8 @@ class FavoriteQuote(db.Model):
             "user_id": self.user_id,
             "quote_text": self.quote_text,
             "author": self.author,
+            "type": self.type,
+            "title": self.title,
+            "description": self.description,
+            "url": self.url
         }

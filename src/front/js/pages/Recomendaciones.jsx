@@ -16,6 +16,19 @@ const Recomendaciones = () => {
         navigate("/");
     };
 
+    const handleGuardarFavorito = (obj) => {
+        console.log(obj);
+        const favoritoCompleto = {
+            "type": obj.type,             
+            "quote_text": "N/A",  
+            "author": "N/A",  
+            "description": obj.description, 
+            "url": obj.url,
+            "title": obj.title,
+        }
+        actions.guardarFavorito(favoritoCompleto);
+    }
+
     return (
         <div className="container mt-5">
             <div className="d-flex justify-content-between mb-4">
@@ -52,6 +65,14 @@ const Recomendaciones = () => {
                         <div className="card-body">
                             <h5 className="card-title">{recomendacion.title}</h5>
                             <p className="card-text">{recomendacion.description}</p>
+                        </div>
+                        <div className="card-footer">
+                            <button
+                                className="btn btn-primary"
+                                onClick={() => handleGuardarFavorito(recomendacion)}
+                            >
+                                Guardar como Favorito
+                            </button>
                         </div>
                     </div>
                 ))

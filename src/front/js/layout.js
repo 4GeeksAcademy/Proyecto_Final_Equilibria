@@ -12,17 +12,21 @@ import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 import Login from "./pages/login.jsx";
 import { Signup } from "./pages/Signup.jsx";
-import  Dashboard  from "./pages/dashboard.jsx";
+import Dashboard  from "./pages/dashboard.jsx";
 import VistaFavoritos  from "./pages/vistaFavoritos.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import Registrodiario from "./pages/registrodiario.jsx";
-import  VistaUsuarios  from "./pages/VistaUsuarios.jsx";
+import VistaUsuarios  from "./pages/VistaUsuarios.jsx";
 import Diario from "./pages/Diario.jsx";
-import  FrasesMotivacionales  from "./pages/FrasesMotivacionales.jsx";
+import FrasesMotivacionales  from "./pages/FrasesMotivacionales.jsx";
 import Recomendaciones from "./pages/Recomendaciones.jsx";
 import SignupAdmin from "./pages/SignupAdmin.jsx";
 import Favoritos from "./pages/Favoritos.jsx";
-
+import VistaFavoritosPeliculas from "./pages/VistaFavoritosPeliculas.jsx";
+import VistaFavoritosBooks from "./pages/VistaFavoritosBooks.jsx";
+import VistaFavoritosPodcasts from "./pages/VistaFavoritosPodcasts.jsx";
+import VistaFavoritosSeries from "./pages/vistaFavoritosSeries.jsx";
+import VistaFavoritosexercises from "./pages/vistaFavoritosexercises.jsx";
 
 //create your first component
 const Layout = () => {
@@ -41,6 +45,12 @@ const Layout = () => {
                         <Route element={<Signup />} path="/signup" />
                         <Route element={<SignupAdmin />} path="/signup-admin" />
                         <Route element={<Favoritos />} path="/favoritos" />
+                        <Route element={<VistaFavoritos />} path="/favoritos-quotes" />
+                        <Route element={<VistaFavoritosPeliculas />} path="/favoritos-movies" />
+                        <Route element={<VistaFavoritosBooks />} path="/favoritos-books" />
+                        <Route element={<VistaFavoritosPodcasts />} path="/favoritos-podcasts" />
+                        <Route element={<VistaFavoritosSeries />} path="/favoritos-series" />
+                        <Route element={<VistaFavoritosexercises />} path="/favoritos-exercises" />
                         <Route element={<Diario />} path="/diario" />
                         <Route element={<Dashboard />} path="/dashboard" />
                         <Route element={<AdminDashboard />} path="/admin-dashboard" />
@@ -48,7 +58,6 @@ const Layout = () => {
                         <Route element={<FrasesMotivacionales />} path="/frases-motivacionales" />
                         <Route element={<Recomendaciones />} path="/recomendaciones" />
                         <Route element={<VistaUsuarios />} path="/vista-usuarios" />
-                        <Route element={<VistaFavoritos />} path="/favoritos" />
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />

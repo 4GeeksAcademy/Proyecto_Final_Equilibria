@@ -18,7 +18,16 @@ const FrasesMotivacionales = () => {
     };
 
     const handleGuardarFavorito = (frase) => {
-        actions.guardarFraseFavorita(frase);
+        const favoritoCompleto = {
+            "type": "quote",             
+            "quote_text": frase.quote,  
+            "author": frase.author,  
+            "description": "N/A", 
+            "url": "N/A",
+            "title": "N/A",
+        }
+        
+        actions.guardarFavorito(favoritoCompleto);
         setFavoritos((prevFavoritos) => [...prevFavoritos, frase.quote]); // Marca la frase como favorita
     };
 
@@ -63,8 +72,8 @@ const FrasesMotivacionales = () => {
                                 <p className="card-text text-muted">- {frase.author}</p>
                                 <button
                                     className={`btn ${favoritos.includes(frase.quote)
-                                            ? "btn-success"
-                                            : "btn-outline-primary"
+                                        ? "btn-success"
+                                        : "btn-outline-primary"
                                         } w-100`}
                                     onClick={() => handleGuardarFavorito(frase)}
                                     disabled={favoritos.includes(frase.quote)} // Deshabilita si ya es favorito
