@@ -471,16 +471,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("Error loading message from backend", error)
 				}
 			},
-			cambiarContrasena: async (newPassword, user_id) => {
+			cambiarDatos: async (datos) => {
 				try {
 					const token = sessionStorage.getItem("token");
-					const resp = await fetch(process.env.BACKEND_URL + "api/user/change-password", {
+					const resp = await fetch(process.env.BACKEND_URL + "api/user/change-data", {
 						method: "PATCH",
 						headers: {
 							"Content-Type": "application/json",
 							"authorization": "Bearer " + token
 						},
-						body: JSON.stringify({ "new_password": newPassword, "user_id": user_id })
+						body: JSON.stringify(datos)
 					});
 					if (!resp.ok) {
 						throw new Error("Error, token no es correcto");
