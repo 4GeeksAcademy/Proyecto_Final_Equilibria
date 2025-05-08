@@ -203,7 +203,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						books: [],
 						exercises: []
 					};
-			
+
 					for (const ele of data) {
 						if (ele.type === "quote") {
 							favoritos.quotes.push(ele);
@@ -377,7 +377,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						},
 						body: JSON.stringify(favorito)
 
-						 });
+					});
 
 					if (!resp.ok) {
 						throw new Error("Error, token no es correcto");
@@ -494,10 +494,48 @@ const getState = ({ getStore, getActions, setStore }) => {
 			setStore: (seccion, favorito_id) => {
 				let store = getStore();
 				store.favoritos[seccion] = store.favoritos[seccion].filter((item) => item.id !== favorito_id);
-				setStore({ ...getStore(), [seccion] : store.favoritos[seccion] });
+				setStore({ ...getStore(), [seccion]: store.favoritos[seccion] });
 			},
+			descargarPDF: async (fechas) => {
+				try {
+					const token = sessionStorage.getItem("token");
+					const resp = await fetch(process.env.BACKEND_URL + "api/diario/export-pdf", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							"authorization": "Bearer " + token
+						},
+						body: JSON.stringify(fechas)
+					});
 
+					if (!resp.ok) {
+						throw new Error(`Error ${resp.status}`);
+					}
+
+					// 1) Lee la respuesta como blob (binario)
+					const blob = await resp.blob();
+
+					// 2) Crea un URL temporal para ese blob
+					const url = window.URL.createObjectURL(blob);
+
+					// 3) Crea y dispara un <a> "virtual"
+					const a = document.createElement("a");
+					a.href = url;
+					a.download = "mis_entradas_diario.pdf";
+					document.body.appendChild(a);
+					a.click();
+					a.remove();
+
+					// 4) Libera el objeto
+					window.URL.revokeObjectURL(url);
+				} catch (err) {
+					console.error("No se pudo descargar el PDF:", err);
+					alert("Error al generar el PDF. Intenta de nuevo.");
+				};
+
+			}
 		}
+
 	};
 };
 
