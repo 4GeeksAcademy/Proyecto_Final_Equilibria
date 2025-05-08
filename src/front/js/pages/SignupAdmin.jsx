@@ -3,9 +3,7 @@ import { Context } from "../store/appContext";
 import { useState, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
-
-export const Signup = () => {
-
+const SignupAdmin = () => {
     let [name, setName] = useState('')
     let [gender, setGender] = useState('')
     let [email, setEmail] = useState('')
@@ -43,7 +41,7 @@ export const Signup = () => {
         }
 
 
-        const userAvailable = await actions.userSignup({ email, password, name, gender })
+        const userAvailable = await actions.adminSignup({ email, password, name, gender })
 
         if (userAvailable) {
             alert("User created successfully")
@@ -65,28 +63,30 @@ export const Signup = () => {
                     <input onChange={handleName} type="text" className="form-control" id="inputName" aria-describedby="nameHelp" />
                 </div>
                 <div className="form-check form-check-inline">
-                    <input onChange={handleGender} className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="male"/>
-                        <label className="form-check-label" htmlFor="inlineRadio1">Masculino</label>
+                    <input onChange={handleGender} className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="male" />
+                    <label className="form-check-label" htmlFor="inlineRadio1">Masculino</label>
                 </div>
                 <div className="form-check form-check-inline">
                     <input onChange={handleGender} className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="female" />
-                        <label className="form-check-label" htmlFor="inlineRadio2">Femenino</label>
+                    <label className="form-check-label" htmlFor="inlineRadio2">Femenino</label>
                 </div>
-                
+
                 <div className="mb-3">
-                    <label htmlFor="exampleInputEmail1" className="form-label">Email </label>
+                    <label htmlFor="exampleInputEmail1" className="form-label">Email</label>
                     <input onChange={handleEmail} type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" />
-                    <div id="emailHelp" className="form-text">No compartiremos tu email con nadie.</div>
+                    <div id="emailHelp" className="form-text">No compartiremos tu email con nadie</div>
                 </div>
                 <div className="mb-3">
                     <label htmlFor="exampleInputPassword1" className="form-label">Contraseña</label>
                     <input onChange={handlePassword} type="password" className="form-control" id="exampleInputPassword1" />
                 </div>
-                <div>
-                    <button onClick={handleSubmit} className="btn btn-primary mx-1">Enviar</button>
-                    <button type="button" onClick={()=> navigate('/')} className="btn btn-primary mx-1">Regresar</button>
+                <div className="py-3">
+                    <button onClick={handleSubmit} className="btn btn-primary mx-2">Enviar</button>
+                    <button type="button" onClick={() => {navigate('/admin-dashboard')}} className="btn btn-primary mx-2">Regresar</button>
                 </div>
             </form>
-        </div>
-    )
+        </div>
+    )
 }
+
+export default SignupAdmin

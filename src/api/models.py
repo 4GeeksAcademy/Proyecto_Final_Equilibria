@@ -8,9 +8,11 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     name = db.Column(db.String(80), unique=False, nullable=False)
+    gender = db.Column(db.String(20), unique=False, nullable=True, default="male")
     password = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False, default=True)
     is_admin = db.Column(db.Boolean, default=False)
+    force_password_change = db.Column(db.Boolean, default=False)
     preferences = db.Column(ARRAY(db.String), nullable=True)
 
     diary_entries = db.relationship('Entrada', back_populates='user')
@@ -23,7 +25,9 @@ class User(db.Model):
             "name": self.name,
             "is_active": self.is_active,
             "is_admin": self.is_admin,
-            "preferences": self.preferences or []
+            "preferences": self.preferences or [],
+            "gender": self.gender,
+            "force_password_change": self.force_password_change,
             # do not serialize the password, its a security breach
         }
     
@@ -51,10 +55,14 @@ class FavoriteQuote(db.Model):
     __tablename__ = 'favorite_quote'
 
     id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(50), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     quote_text = db.Column(db.Text, nullable=False)
-    author = db.Column(db.String(255), nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    author = db.Column(db.String(255), nullable=False)
+    title = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    url = db.Column(db.String(255), nullable=False)
+
 
     user = db.relationship('User', back_populates='favorite_quotes')
 
@@ -64,5 +72,8 @@ class FavoriteQuote(db.Model):
             "user_id": self.user_id,
             "quote_text": self.quote_text,
             "author": self.author,
-            "created_at": self.created_at.isoformat()
+            "type": self.type,
+            "title": self.title,
+            "description": self.description,
+            "url": self.url
         }
