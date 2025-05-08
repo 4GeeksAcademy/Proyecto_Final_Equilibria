@@ -22,7 +22,7 @@ const Dashboard = () => {
             alert("Por favor, ingresa una nueva contraseña.");
             return;
         }
-        if (await actions.cambiarDatos({ "new_password": password})) {
+        if (await actions.cambiarDatos({ "new_password": password })) {
             alert("Contraseña cambiada con éxito.");
             setPassword("");
             actions.verificarToken();
@@ -105,7 +105,7 @@ const Dashboard = () => {
                                                 <img src="https://www.betterteam.com/images/Batterteam-c%C3%B3mo-hacer-una-carta-de-recomendaci%C3%B3n-5924x4566-20230522.jpeg?crop=1:1,smart&width=1200&dpr=2&format=pjpg&auto=webp&quality=85"
                                                     className="card-img-top"
                                                     alt="..."
-                                                    style={{ maxWidth: "300px", height: "auto" }}></img>
+                                                    style={{ maxWidth: "300px", height: "auto" }} />
                                             </div>
                                             <div>
                                                 <h5 className="card-title">¿Por qué es importante llevar un diario?</h5>
@@ -116,12 +116,18 @@ const Dashboard = () => {
                                             </div>
                                         </div>
                                         <div className="card-body">
-                                            <button
-                                                className="btn btn-primary w-100"
-                                                onClick={() => handleNavigate("/diario")}
-                                            >
-                                                Ir
-                                            </button>
+                                            {Array.isArray(store.entradas) && store.entradas.length === 0 ? (
+                                                <div className="alert alert-info mt-2">
+                                                    Aún no tienes entradas en tu diario. ¡Comienza a escribir para poder exportarlas!
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    className="btn btn-primary w-100"
+                                                    onClick={() => handleNavigate("/diario")}
+                                                >
+                                                    Ir
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
