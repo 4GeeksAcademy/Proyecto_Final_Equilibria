@@ -27,6 +27,7 @@ import VistaFavoritosBooks from "./pages/VistaFavoritosBooks.jsx";
 import VistaFavoritosPodcasts from "./pages/VistaFavoritosPodcasts.jsx";
 import VistaFavoritosSeries from "./pages/vistaFavoritosSeries.jsx";
 import VistaFavoritosexercises from "./pages/vistaFavoritosexercises.jsx";
+import VistaCambiarInfoPersonal from "./pages/vistaCambiarInfoPersonal.jsx";
 
 //create your first component
 const Layout = () => {
@@ -46,6 +47,7 @@ const Layout = () => {
                         <Route element={<SignupAdmin />} path="/signup-admin" />
                         <Route element={<Favoritos />} path="/favoritos" />
                         <Route element={<VistaFavoritos />} path="/favoritos-quotes" />
+                        <Route element={<VistaCambiarInfoPersonal />} path="/cambiar-info" />
                         <Route element={<VistaFavoritosPeliculas />} path="/favoritos-movies" />
                         <Route element={<VistaFavoritosBooks />} path="/favoritos-books" />
                         <Route element={<VistaFavoritosPodcasts />} path="/favoritos-podcasts" />

@@ -113,26 +113,6 @@ def handle_favorite_quotes():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# @api.route('/favorite-quotes', methods=['POST'])
-# @jwt_required()
-# def handle_create_favorite_quote():
-#     try:
-#         current_user = get_jwt_identity()
-#         quote_text = request.json.get('quote_text')
-#         author = request.json.get('author')
-
-#         if not quote_text or not author:
-#             return jsonify({'error': 'Quote text and author are required'}), 400
-
-#         new_favorite = FavoriteQuote(user_id=current_user, quote_text=quote_text, author=author)
-#         db.session.add(new_favorite)
-#         db.session.commit()
-
-#         return jsonify(new_favorite.serialize()), 201
-#     except Exception as e:
-#         db.session.rollback()
-#         return jsonify({'error': str(e)}), 500
-
 @api.route('/favorite', methods=['POST'])
 @jwt_required()
 def create_favorite_quote():
@@ -468,27 +448,43 @@ def force_reset_password():
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
     
- 
-@api.route('/user/change-password', methods=['PATCH'])
+@api.route('/user/change-data', methods=['PATCH'])
 @jwt_required()
-def change_password():
+def change_data():
     try:
-        current_user = get_jwt_identity()
-        user = User.query.get(current_user)
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
         if not user:
             return jsonify({'error': 'User not found'}), 404
-        user_id = request.json.get('user_id')
-        new_password = request.json.get('new_password')
-        if not user_id or not new_password:
-            return jsonify({'error': 'User ID and new password are required'}), 400
-        user_to_change = User.query.get(user_id)
-        if not user_to_change:
-            return jsonify({'error': 'User not found'}), 404
-        user_to_change.force_password_change = False
-        hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
-        user_to_change.password = hashed_password
+
+        data = request.get_json() or {}
+        allowed = {
+            'new_password':   lambda v: bcrypt.generate_password_hash(v).decode('utf-8'),
+            'new_email':      lambda v: v.strip().lower(),
+            'new_name':       lambda v: v.strip(),
+            'new_gender':     lambda v: v.strip(),
+            'new_preferences': lambda v: v,
+        }
+
+        updated = False
+        for field, transform in allowed.items():
+            if field in data and data[field] is not None:
+                value = data[field]
+                
+                if field == 'new_password' and len(value) < 8:
+                    return jsonify({'error': 'Password too short'}), 400
+                setattr(user, field.replace('new_', ''), transform(value))
+                updated = True
+
+        if not updated:
+            return jsonify({'error': 'No valid fields provided'}), 400
+
+        if 'new_password' in data and user.force_password_change:
+            user.force_password_change = False
+
         db.session.commit()
-        return jsonify({'message': 'Password changed successfully'}), 200
+        return jsonify({'message': 'User data updated successfully'}), 200
+
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500

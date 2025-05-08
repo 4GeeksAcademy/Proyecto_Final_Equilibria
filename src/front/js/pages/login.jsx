@@ -19,14 +19,6 @@ const Login = () => {
         }
         const usuarioCorrecto = await actions.loginUsuario({ email, password });
         if (usuarioCorrecto) {
-            // if (await actions.verificarToken()) {
-
-            //     if (await actions.isAdmin()) {
-            //         navigate("/admin-dashboard");
-            //     } else {
-            //         navigate("/dashboard");
-            //     }   
-            // }
             if (! await actions.verificarToken()) {
                 return;
             }

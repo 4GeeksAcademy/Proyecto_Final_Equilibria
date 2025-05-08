@@ -6,7 +6,7 @@ const Dashboard = () => {
     const navigate = useNavigate();
     const { store, actions } = useContext(Context);
     const [password, setPassword] = useState("");
-      
+
 
     const handleNavigate = (path) => {
         navigate(path);
@@ -22,7 +22,7 @@ const Dashboard = () => {
             alert("Por favor, ingresa una nueva contraseña.");
             return;
         }
-        if (await actions.cambiarContrasena(password, store.info?.id)) {
+        if (await actions.cambiarDatos({ "new_password": password})) {
             alert("Contraseña cambiada con éxito.");
             setPassword("");
             actions.verificarToken();
@@ -31,12 +31,11 @@ const Dashboard = () => {
         else {
             alert("Error al cambiar la contraseña. Por favor, intenta nuevamente.");
         }
-        
+
     };
-    
+
 
     useEffect(() => {
-        // actions.verificarToken();
         actions.fraseMotivacional();
     }, []);
 
@@ -235,7 +234,7 @@ const Dashboard = () => {
                                         <div className="card-body">
                                             <button
                                                 className="btn btn-info w-100"
-                                                onClick={() => handleNavigate("/editar-informacion")}
+                                                onClick={() => handleNavigate("/cambiar-info")}
                                             >
                                                 Ir
                                             </button>
