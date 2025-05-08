@@ -74,6 +74,9 @@ const Login = () => {
                             placeholder="Ingresa tu contraseña"
                             onChange={(e) => setPassword(e.target.value)}
                         />
+                        <div>
+                            <a href="/reestablecer-contrasena" style={{fontSize:'10px', marginLeft:'10px'}}>Olvidé mi contraseña</a>
+                        </div>
                         <div className="invalid-feedback">Por favor, ingresa tu contraseña.</div>
                     </div>
                     <div className="d-grid gap-2">
