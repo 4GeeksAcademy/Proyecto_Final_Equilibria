@@ -84,7 +84,7 @@ export const Signup = () => {
                 </div>
                 <div>
                     <button onClick={handleSubmit} className="btn btn-primary mx-1">Enviar</button>
-                    <button onClick={()=> navigate('/')} className="btn btn-primary mx-1">Regresar</button>
+                    <button type="button" onClick={()=> navigate('/')} className="btn btn-primary mx-1">Regresar</button>
                 </div>
             </form>
         </div>

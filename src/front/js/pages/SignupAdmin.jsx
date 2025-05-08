@@ -82,7 +82,7 @@ const SignupAdmin = () => {
                 </div>
                 <div className="py-3">
                     <button onClick={handleSubmit} className="btn btn-primary mx-2">Enviar</button>
-                    <button onClick={() => {navigate('/admin-dashboard')}} className="btn btn-primary mx-2">Regresar</button>
+                    <button type="button" onClick={() => {navigate('/admin-dashboard')}} className="btn btn-primary mx-2">Regresar</button>
                 </div>
             </form>
         </div>
