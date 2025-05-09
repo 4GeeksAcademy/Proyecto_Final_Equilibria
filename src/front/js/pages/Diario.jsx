@@ -97,6 +97,7 @@ const Diario = () => {
             </div>
 
             {/* Lista de entradas */}
+            
             <div>
                 <div className="row g-3 align-items-end mb-4">
                     <div className="col-md-5">
@@ -130,12 +131,13 @@ const Diario = () => {
                         >
                             Filtrar
                         </button>
+                        {store.listaEntradas && store.listaEntradas.length > 0 && (
                         <button
                             className="btn btn-primary "
                             onClick={() => descargarPDF()}
                         >
                             Descargar PDF
-                        </button>
+                        </button>)}
                     </div>
                 </div>
                 {store.listaEntradas && store.listaEntradas.length > 0 ? (
