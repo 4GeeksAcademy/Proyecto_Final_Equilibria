@@ -694,3 +694,26 @@ def export_diary_pdf():
         if buffer is not None:
             buffer.close()
         return make_response(jsonify({"error": str(e)}), 500)
+
+@api.route('/user/upgrade', methods=['POST'])
+@jwt_required()
+def request_premium_upgrade():
+    try:
+        current_user = get_jwt_identity()
+        user = User.query.get(current_user)
+
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        if user.is_premium:
+            return jsonify({'message': 'User is already a premium member'}), 400
+
+        # Aquí podrías agregar lógica adicional, como enviar una solicitud al administrador
+        # o activar directamente el estado premium del usuario.
+        user.is_premium = True  # Suponiendo que existe un campo para solicitudes
+        db.session.commit()
+
+        return jsonify({'message': 'Premium upgrade request submitted successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
