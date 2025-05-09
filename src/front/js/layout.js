@@ -3,6 +3,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
+
+
 import { Home } from "./pages/home";
 import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
@@ -12,13 +14,13 @@ import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 import Login from "./pages/login.jsx";
 import { Signup } from "./pages/Signup.jsx";
-import Dashboard  from "./pages/dashboard.jsx";
-import VistaFavoritos  from "./pages/vistaFavoritos.jsx";
+import Dashboard from "./pages/dashboard.jsx";
+import VistaFavoritos from "./pages/vistaFavoritos.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import Registrodiario from "./pages/registrodiario.jsx";
-import VistaUsuarios  from "./pages/VistaUsuarios.jsx";
+import VistaUsuarios from "./pages/VistaUsuarios.jsx";
 import Diario from "./pages/Diario.jsx";
-import FrasesMotivacionales  from "./pages/FrasesMotivacionales.jsx";
+import FrasesMotivacionales from "./pages/FrasesMotivacionales.jsx";
 import Recomendaciones from "./pages/Recomendaciones.jsx";
 import SignupAdmin from "./pages/SignupAdmin.jsx";
 import Favoritos from "./pages/Favoritos.jsx";
@@ -36,7 +38,10 @@ const Layout = () => {
     // you can set the basename on the .env file located at the root of this project, E.g: BASENAME=/react-hello-webapp/
     const basename = process.env.BASENAME || "";
 
-    if(!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL/ >;
+
+
+
+    if (!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL />;
 
     return (
         <div>
@@ -46,7 +51,7 @@ const Layout = () => {
                         <Route element={<Login />} path="/" />
                         <Route element={<Signup />} path="/signup" />
                         <Route element={<SignupAdmin />} path="/signup-admin" />
-                        <Route element={<ReestablecerContrasena />} path="/reestablecer-contrasena" />
+                        <Route element={<ReestablecerContrasena />} path="/reestablecer-contrasena" />
                         <Route element={<Favoritos />} path="/favoritos" />
                         <Route element={<VistaFavoritos />} path="/favoritos-quotes" />
                         <Route element={<VistaCambiarInfoPersonal />} path="/cambiar-info" />

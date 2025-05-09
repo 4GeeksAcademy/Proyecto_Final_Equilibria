@@ -5,6 +5,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		store: {
 			// Información del usuario
 			// mensajePorMood : false,
+			pago: null,
 			info: null, // Información del usuario autenticado
 			token: sessionStorage.getItem("token") || null, // Token almacenado
 			mensajeIA: null, // Mensaje generado por IA
@@ -533,7 +534,33 @@ const getState = ({ getStore, getActions, setStore }) => {
 					alert("Error al generar el PDF. Intenta de nuevo.");
 				};
 
+			},
+			convertirPremium: async () => {
+				try {
+					const token = sessionStorage.getItem("token");
+					const resp = await fetch(process.env.BACKEND_URL + "api/user/upgrade", {
+						method: "POST",
+						headers: {
+							"authorization": "Bearer " + token
+						}
+					});
+
+					if (!resp.ok) {
+						throw new Error(`Error ${resp.status}`);
+					}
+
+					return true
+				} catch (err) {
+					console.error("No se pudo convertir a premiuum:", err);
+				};
+
+			},
+			setPago: () => {
+				setStore({
+					...getStore(), info: { ...store.info, is_premium: true }
+				});
 			}
+
 		}
 
 	};
