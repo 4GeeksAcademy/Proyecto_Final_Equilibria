@@ -37,12 +37,21 @@ const Checkout = () => {
 
     // Maneja la aprobación y captura el pago
     const onApproveOrder = async (data, actions) => {
-        const details = await actions.order.capture()
-        if (details.status === "COMPLETED") {
-            if (!fluxActions.convertirPremium()) {
-                fluxActions.setPago()
-                alert("Algo salio mal")
+        try {
+            const details = await actions.order.capture();
+            if (details.status === "COMPLETED") {
+                // Llama a la acción global para convertir al usuario en premium
+                const success = await fluxActions.convertirPremium();
+                if (success) {
+                    alert("¡Felicidades! Ahora eres un usuario premium.");
+                    navigate("/dashboard"); 
+                } else {
+                    alert("Algo salió mal al actualizar tu estado premium. Intenta de nuevo.");
+                }
             }
+        } catch (error) {
+            console.error("Error al procesar el pago:", error);
+            alert("Hubo un problema al procesar tu pago. Por favor, intenta de nuevo.");
         }
     };
 

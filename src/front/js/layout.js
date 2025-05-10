@@ -31,6 +31,7 @@ import VistaFavoritosSeries from "./pages/vistaFavoritosSeries.jsx";
 import VistaFavoritosexercises from "./pages/vistaFavoritosexercises.jsx";
 import VistaCambiarInfoPersonal from "./pages/vistaCambiarInfoPersonal.jsx";
 import ReestablecerContrasena from "./pages/ReestablecerContrasena.jsx";
+import Checkout from "./component/checkout.jsx";
 
 //create your first component
 const Layout = () => {
@@ -52,6 +53,7 @@ const Layout = () => {
                         <Route element={<Signup />} path="/signup" />
                         <Route element={<SignupAdmin />} path="/signup-admin" />
                         <Route element={<ReestablecerContrasena />} path="/reestablecer-contrasena" />
+                        <Route element={<Checkout />} path="/checkout" />
                         <Route element={<Favoritos />} path="/favoritos" />
                         <Route element={<VistaFavoritos />} path="/favoritos-quotes" />
                         <Route element={<VistaCambiarInfoPersonal />} path="/cambiar-info" />

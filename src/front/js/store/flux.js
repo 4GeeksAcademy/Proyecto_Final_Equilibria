@@ -134,7 +134,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					// fetching data from the backend
 					const token = sessionStorage.getItem("token");
-					const resp = await fetch(process.env.BACKEND_URL + "/api/user", {
+					const resp = await fetch(process.env.BACKEND_URL + "api/user", {
 						method: "GET",
 						headers: {
 							"Authorization": "Bearer " + token
@@ -275,7 +275,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			isAdmin: async () => {
 				try {
 					const token = sessionStorage.getItem("token");
-					const resp = await fetch(process.env.BACKEND_URL + "/api/user", {
+					const resp = await fetch(process.env.BACKEND_URL + "api/user", {
 						method: "GET",
 						headers: {
 							"Authorization": "Bearer " + token
@@ -548,7 +548,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (!resp.ok) {
 						throw new Error(`Error ${resp.status}`);
 					}
-
+					const store = getStore()
+					setStore({...getStore(), info: { ...store.info, is_premium: true}})
 					return true
 				} catch (err) {
 					console.error("No se pudo convertir a premiuum:", err);
