@@ -16,7 +16,6 @@ const Dashboard = () => {
     const { store, actions } = useContext(Context);
     const [password, setPassword] = useState("");
     const [showCheckout, setShowCheckout] = useState(false);
-    const [showButtonPremiun, setShowButtonPremiun] = useState(store.info?.is_premium)
 
     // Navegación sencilla
     const handleNavigate = (path) => navigate(path);
@@ -46,7 +45,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         actions.fraseMotivacional();
-    }, []);
+    }, [store.info.is_premium]);
 
     return (
         <PayPalScriptProvider options={initialOptions}>
@@ -74,7 +73,8 @@ const Dashboard = () => {
                         <div className="w-100 d-flex justify-content-between align-items-center p-3 bg-white shadow-sm">
                             <h1 className="page-title">Equilibra</h1>
                             <div className="d-flex gap-2">
-                                {!showButtonPremiun && (
+                                {/* Mostrar botón solo si el usuario no es premium */}
+                                {!store.info?.is_premium && (
                                     <button
                                         className="btn btn-warning"
                                         onClick={() => setShowCheckout(true)}
@@ -214,8 +214,8 @@ const Dashboard = () => {
                             </button>
                             <Checkout
                                 onSuccess={() => {
-                                    setShowCheckout(false)
-                                    // actions.verificarToken()
+                                    setShowCheckout(false);
+                                    actions.verificarToken(); // Actualizar el estado global
                                 }}
                             />
                         </div>

@@ -50,7 +50,7 @@ def handle_create_user():
         existe_usuario= User.query.filter_by(email=email).first()
         
         if existe_usuario:
-            return jsonify({'error': 'email already exists'})
+            return jsonify({'error': 'email already exists'}), 409
         
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
         new_user = User(email=email, password=hashed_password, name=name, is_admin=is_admin, gender=gender)   
