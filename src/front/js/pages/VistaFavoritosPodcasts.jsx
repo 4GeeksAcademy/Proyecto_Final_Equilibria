@@ -15,6 +15,7 @@ const VistaFavoritosPodcasts = () => {
 
     const handleEliminarFavorito = (id) => {
         actions.eliminarFavorito(id, "podcasts"); // Acción para eliminar un podcast de favoritos
+        actions.setStore("podcasts", id)
     };
 
     return (
