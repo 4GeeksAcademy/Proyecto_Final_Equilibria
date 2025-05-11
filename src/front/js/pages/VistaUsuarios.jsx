@@ -33,7 +33,6 @@ const VistaUsuarios = () => {
 
         const queryString = queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
         const fullUrl = `/api/admin/users${queryString}`;
-
         setUrl(fullUrl);
     };
 
