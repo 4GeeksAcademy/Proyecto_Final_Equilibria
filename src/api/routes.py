@@ -578,8 +578,6 @@ def get_diary_entries():
 
         # 6) Ejecuta la consulta y devuelve resultados
         entries = query.order_by(Entrada.date).all()
-        if not entries:
-            return jsonify({'error': 'No hay entradas en ese rango'}), 404
 
         return jsonify([e.serialize() for e in entries]), 200
 
