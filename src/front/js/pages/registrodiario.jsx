@@ -7,6 +7,7 @@ const RegistroDiario = () => {
   const { store, actions } = useContext(Context);
   const [estado, setEstado] = useState("");
   const [descripcion, setDescripcion] = useState("");
+  const [disabled, setDisabled] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,9 +16,18 @@ const RegistroDiario = () => {
       alert("Por favor, completa todos los campos antes de guardar.");
       return;
     }
-    await actions.guardarEstadodeanimo({ mood_tag: estado, entry_text: descripcion });
-    await actions.mensajePorMood();
-    navigate("/diario");
+    setDisabled(true);
+
+    try {
+      await actions.guardarEstadodeanimo({ mood_tag: estado, entry_text: descripcion });
+      await actions.mensajePorMood();
+      navigate("/diario");
+    } catch (error) {
+      console.error("Error al guardar el estado de ánimo:", error);
+      alert("Hubo un problema al guardar la entrada. Intenta de nuevo.");
+    } finally {
+      setDisabled(false); // Habilita el botón después de completar el fetch
+    }
   };
 
   const handleNavigateToDiario = () => {
@@ -90,6 +100,7 @@ const RegistroDiario = () => {
             <button
               type="submit"
               className="btn btn-primary w-100"
+              disabled={disabled}
             >
               Guardar entrada
             </button>

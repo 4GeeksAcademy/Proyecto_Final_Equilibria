@@ -26,6 +26,14 @@ const Dashboard = () => {
         navigate("/");
     };
 
+    const handleNavigateFavoritos = () => {
+        if (store.info?.is_premium) {
+            navigate("/favoritos");
+        } else {
+            alert("¡Ups! Debes ser premium para acceder a esta sección.");
+        }
+    };
+
     // Cambio de contraseña forzado
     const handleChangePassword = async () => {
         if (!password.trim()) {
@@ -100,7 +108,11 @@ const Dashboard = () => {
                         <div className="container d-flex flex-column align-items-center justify-content-center min-vh-100 bg-light p-4">
                             {store.info ? (
                                 <>
-                                    <h2 className="text-primary mb-3">¡Hola, {store.info.name}! 😊</h2>
+                                    <div className="modal-body">
+                                        <h2 className="text-primary mb-3">¡Hola, {store.info.name}! 😊</h2>
+                                        Bienvenido a Equilibria ✨
+                                        <p className="mt-2">Tu bienestar es nuestra prioridad. Algunas respuestas y recomendaciones son generadas automáticamente por nuestra IA para brindarte una experiencia más personalizada.</p>
+                                    </div>
                                     {store.loadingFraseMotivacionalIA ? (
                                         <div className="alert alert-info text-center w-100">
                                             <p>Buscando tu dosis de inspiración...</p>
@@ -112,93 +124,93 @@ const Dashboard = () => {
                                         </div>
                                     )}
                                     {/* Tarjetas de navegación */}
-                            <div className="row row-cols-1 row-cols-md-2 g-4 mt-4 w-100">
-                                {/* Diario */}
-                                <div className="col">
-                                    <div className="card h-100 shadow-sm">
-                                        <div className="card-body text-center">
-                                            <h5 className="card-title">Diario personal</h5>
-                                            <p className="card-text">Escribe y reflexiona sobre tu día.</p>
-                                            <button
-                                                className="btn btn-primary"
-                                                onClick={() => handleNavigate("/diario")}
-                                            >
-                                                ¡Escribir!
-                                            </button>
+                                    <div className="row row-cols-1 row-cols-md-2 g-4 mt-4 w-100">
+                                        {/* Diario */}
+                                        <div className="col">
+                                            <div className="card h-100 shadow-sm">
+                                                <div className="card-body text-center">
+                                                    <h5 className="card-title">Diario personal</h5>
+                                                    <p className="card-text">Escribe y reflexiona sobre tu día.</p>
+                                                    <button
+                                                        className="btn btn-primary"
+                                                        onClick={() => handleNavigate("/diario")}
+                                                    >
+                                                        ¡Escribir!
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
 
-                                {/* Frases motivacionales */}
-                                <div className="col">
-                                    <div className="card h-100 shadow-sm">
-                                        <div className="card-body text-center">
-                                            <h5 className="card-title">Frases motivacionales</h5>
-                                            <p className="card-text">Encuentra esa frase que te impulse.</p>
-                                            <button
-                                                className="btn btn-secondary"
-                                                onClick={() => handleNavigate("/frases-motivacionales")}
-                                            >
-                                                Ver frases
-                                            </button>
+                                        {/* Frases motivacionales */}
+                                        <div className="col">
+                                            <div className="card h-100 shadow-sm">
+                                                <div className="card-body text-center">
+                                                    <h5 className="card-title">Frases motivacionales</h5>
+                                                    <p className="card-text">Encuentra esa frase que te impulse.</p>
+                                                    <button
+                                                        className="btn btn-secondary"
+                                                        onClick={() => handleNavigate("/frases-motivacionales")}
+                                                    >
+                                                        Ver frases
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
 
-                                {/* Recomendaciones */}
-                                <div className="col">
-                                    <div className="card h-100 shadow-sm">
-                                        <div className="card-body text-center">
-                                            <h5 className="card-title">Recomendaciones</h5>
-                                            <p className="card-text">Sugerencias para tu bienestar.</p>
-                                            <button
-                                                className="btn btn-success"
-                                                onClick={() => handleNavigate("/recomendaciones")}
-                                            >
-                                                ¡Vamos!
-                                            </button>
+                                        {/* Recomendaciones */}
+                                        <div className="col">
+                                            <div className="card h-100 shadow-sm">
+                                                <div className="card-body text-center">
+                                                    <h5 className="card-title">Recomendaciones</h5>
+                                                    <p className="card-text">Sugerencias para tu bienestar.</p>
+                                                    <button
+                                                        className="btn btn-success"
+                                                        onClick={() => handleNavigate("/recomendaciones")}
+                                                    >
+                                                        ¡Vamos!
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
 
-                                {/* Favoritos */}
-                                <div className="col">
-                                    <div className="card h-100 shadow-sm">
-                                        <div className="card-body text-center">
-                                            <h5 className="card-title">Favoritos</h5>
-                                            <p className="card-text">Guarda lo que más te inspira.</p>
-                                            <button
-                                                className="btn btn-warning"
-                                                onClick={() => handleNavigate("/favoritos")}
-                                            >
-                                                Mis favoritos
-                                            </button>
+                                        {/* Favoritos */}
+                                        <div className="col">
+                                            <div className="card h-100 shadow-sm">
+                                                <div className="card-body text-center">
+                                                    <h5 className="card-title">Favoritos</h5>
+                                                    <p className="card-text">Guarda lo que más te inspira.</p>
+                                                    <button
+                                                        className="btn btn-warning"
+                                                        onClick={() => handleNavigateFavoritos()}
+                                                    >
+                                                        Mis favoritos
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
 
-                                {/* Editar info */}
-                                <div className="col">
-                                    <div className="card h-100 shadow-sm">
-                                        <div className="card-body text-center">
-                                            <h5 className="card-title">Mi perfil</h5>
-                                            <p className="card-text">Actualiza tus datos personales.</p>
-                                            <button
-                                                className="btn btn-info"
-                                                onClick={() => handleNavigate("/cambiar-info")}
-                                            >
-                                                Editar perfil
-                                            </button>
+                                        {/* Editar info */}
+                                        <div className="col">
+                                            <div className="card h-100 shadow-sm">
+                                                <div className="card-body text-center">
+                                                    <h5 className="card-title">Mi perfil</h5>
+                                                    <p className="card-text">Actualiza tus datos personales.</p>
+                                                    <button
+                                                        className="btn btn-info"
+                                                        onClick={() => handleNavigate("/cambiar-info")}
+                                                    >
+                                                        Editar perfil
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
                                 </>
                             ) : (
                                 <h4 className="text-danger">No encontramos tu información...</h4>
                             )}
 
-                            
+
                         </div>
                     </div>
                 )}
