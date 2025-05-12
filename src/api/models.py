@@ -1,19 +1,22 @@
 from flask_sqlalchemy import SQLAlchemy  # Para base de datos
 from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy import Column, Integer, String, Boolean
 
 import datetime
 db = SQLAlchemy()
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    name = db.Column(db.String(80), unique=False, nullable=False)
-    gender = db.Column(db.String(20), unique=False, nullable=True, default="male")
-    password = db.Column(db.String(80), unique=False, nullable=False)
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False, default=True)
-    is_admin = db.Column(db.Boolean, default=False)
-    force_password_change = db.Column(db.Boolean, default=False)
+    __tablename__ = 'user'
+    id = Column(Integer, primary_key=True)
+    email = Column(String, unique=True, nullable=False)
+    password = Column(String, nullable=False)
+    name = Column(String, nullable=False)
+    gender = Column(String, nullable=True, default="male")
+    is_active = Column(Boolean, unique=False, nullable=False, default=True)
+    is_admin = Column(Boolean, default=False)
+    force_password_change = Column(Boolean, default=False)
     preferences = db.Column(ARRAY(db.String), nullable=True)
+    is_premium = Column(Boolean, default=False)
 
     diary_entries = db.relationship('Entrada', back_populates='user')
     favorite_quotes = db.relationship('FavoriteQuote', back_populates='user')
@@ -28,7 +31,8 @@ class User(db.Model):
             "preferences": self.preferences or [],
             "gender": self.gender,
             "force_password_change": self.force_password_change,
-            # do not serialize the password, its a security breach
+            "is_premium": self.is_premium,
+            
         }
     
 class Entrada(db.Model):

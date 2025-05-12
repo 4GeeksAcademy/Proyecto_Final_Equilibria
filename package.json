@@ -73,6 +73,7 @@
 		]
 	},
 	"dependencies": {
+		"@paypal/react-paypal-js": "^8.8.3",
 		"bootstrap-icons": "^1.11.4",
 		"prop-types": "^15.6.1",
 		"react": "^16.8.4",

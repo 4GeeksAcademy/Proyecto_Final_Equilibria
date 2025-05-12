@@ -1,12 +1,17 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
-from flask import Flask, request, jsonify, url_for, Blueprint
+from flask import Flask, request, jsonify, url_for, Blueprint,  make_response
 from api.models import db, User, FavoriteQuote, Entrada
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt 
 from flask_jwt_extended import  JWTManager, create_access_token, jwt_required, get_jwt_identity
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from io import BytesIO
+from datetime import datetime, timezone, timedelta
+from sqlalchemy import cast, Date
 import os
 import openai
 import json
@@ -45,7 +50,7 @@ def handle_create_user():
         existe_usuario= User.query.filter_by(email=email).first()
         
         if existe_usuario:
-            return jsonify({'error': 'email already exists'})
+            return jsonify({'error': 'email already exists'}), 409
         
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
         new_user = User(email=email, password=hashed_password, name=name, is_admin=is_admin, gender=gender)   
@@ -539,14 +544,174 @@ def make_remove_admin():
 @jwt_required()
 def get_diary_entries():
     try:
-        current_user = get_jwt_identity()
-        entries = Entrada.query.filter_by(user_id=current_user).all()
-        entries_list = [entry.serialize() for entry in entries]
+        user_id = get_jwt_identity()
+        query   = Entrada.query.filter_by(user_id=user_id)
 
-        if not entries:
-            return jsonify({'error': 'No diary entries found for this user'}), 404
+        # 1) Lee los parámetros (si no llegan, get() devuelve None)
+        start_str = request.args.get('start_date')
+        end_str   = request.args.get('end_date')
 
-        return jsonify(entries_list), 200
+        # 2) Inicializa los datetime en None
+        start_dt = None
+        end_dt   = None
+
+        # 3) Si start_str es una cadena no vacía, parsea; si falla, devuelve 400
+        if start_str:
+            try:
+                start_dt = datetime.strptime(start_str, '%Y-%m-%d')
+            except ValueError:
+                return jsonify({'error': 'start_date inválida'}), 400
+            query = query.filter(Entrada.date >= start_dt)
+
+        # 4) Igual para end_str
+        if end_str:
+            try:
+                end_dt = datetime.strptime(end_str, '%Y-%m-%d')
+                end_dt = end_dt + timedelta(days=1) - timedelta(microseconds=1)
+            except ValueError:
+                return jsonify({'error': 'end_date inválida'}), 400
+            query = query.filter(Entrada.date <= end_dt)
+
+        # 5) Solo si ambos existen, comprueba el orden
+        if start_dt and end_dt and start_dt > end_dt:
+            return jsonify({'error': 'start_date debe ser anterior o igual a end_date'}), 400
+
+        # 6) Ejecuta la consulta y devuelve resultados
+        entries = query.order_by(Entrada.date).all()
+
+        return jsonify([e.serialize() for e in entries]), 200
+
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500 
+        return jsonify({'error': str(e)}), 500
+   
+@api.route('/diario/export-pdf', methods=['POST'])
+@jwt_required()
+def export_diary_pdf():
+    buffer = None
+    start_dt = None
+    end_dt   = None
+    try:
+        # 1. Obtiene filtros del cuerpo JSON (YYYY-MM-DD)
+        data = request.get_json() or {}
+        start_str = data.get('start_date')  # opcional
+        end_str = data.get('end_date')      # opcional
+        user_id = get_jwt_identity()
+
+        # 2. Construye query base
+        query = Entrada.query.filter_by(user_id=user_id)
+
+        # 3. Aplica filtro por fechas si vienen en JSON
+        if start_str:
+            try:
+                start_dt = datetime.strptime(start_str, '%Y-%m-%d').date()
+                query = query.filter(cast(Entrada.date, Date) >= start_dt)
+            except ValueError:
+                return make_response(jsonify({'error': 'start_date inválida'}), 400)
+        if end_str:
+            try:
+                end_dt = datetime.strptime(end_str, '%Y-%m-%d').date()
+                query = query.filter(cast(Entrada.date, Date) <= end_dt)
+            except ValueError:
+                return make_response(jsonify({'error': 'end_date inválida'}), 400)
+        # … ya parseaste start_dt y end_dt con datetime.strptime …
+
+
+        if start_str and end_str and start_dt > end_dt:
+            return make_response(
+                jsonify({'error': 'start_date debe ser anterior o igual a end_date'}), 
+                400
+            )
+
+
+        ahora = datetime.now(timezone.utc).date()
+    # Solo comprobamos cada variable si fue parseada:
+        if start_dt and start_dt > ahora:
+            return make_response(
+                jsonify({'error': 'start_date no puede estar en el futuro'}), 
+                400
+            )
+        if end_dt and end_dt > ahora:
+            return make_response(
+                jsonify({'error': 'end_date no puede estar en el futuro'}), 
+                400
+            )
+
+        # 4. Ejecuta consulta y ordena por fecha
+        entries = query.order_by(Entrada.date).all()
+
+        # 5. Prepara el PDF en memoria
+        buffer = BytesIO()
+        c = canvas.Canvas(buffer, pagesize=letter)
+        width, height = letter
+        margin = 40
+        y = height - margin
+
+        # 6. Título
+        c.setFont("Helvetica-Bold", 16)
+        c.drawString(margin, y, "Mis Entradas del Diario")
+        y -= 30
+
+        # 7. Dibuja entradas
+        c.setFont("Helvetica", 12)
+        for entry in entries:
+            fecha = entry.date.strftime("%d/%m/%Y")
+            contenido = entry.entry_text or ""
+
+            # Salto de página
+            if y < margin + 60:
+                c.showPage()
+                y = height - margin
+                c.setFont("Helvetica", 12)
+
+            # Fecha
+            c.setFont("Helvetica-Bold", 12)
+            c.drawString(margin, y, fecha)
+            y -= 18
+
+            # Contenido
+            c.setFont("Helvetica", 12)
+            for line in contenido.split("\n"):
+                c.drawString(margin + 20, y, line)
+                y -= 14
+            y -= 10
+
+        # 8. Finaliza PDF
+        c.save()
+        pdf_data = buffer.getvalue()
+
+        # 9. Responde con el PDF
+        resp = make_response(pdf_data)
+        resp.headers["Content-Type"] = "application/pdf"
+        resp.headers["Content-Disposition"] = (
+            "attachment; filename=mis_entradas_diario.pdf"
+        )
+        return resp
+
+    except Exception as e:
+        if buffer is not None:
+            buffer.close()
+        return make_response(jsonify({"error": str(e)}), 500)
+
+@api.route('/user/upgrade', methods=['POST'])
+@jwt_required()
+def request_premium_upgrade():
+    try:
+        current_user = get_jwt_identity()
+        user = User.query.get(current_user)
+
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        if user.is_premium:
+            return jsonify({'message': 'User is already a premium member'}), 400
+
+        # Aquí podrías agregar lógica adicional, como enviar una solicitud al administrador
+        # o activar directamente el estado premium del usuario.
+        user.is_premium = True  # Suponiendo que existe un campo para solicitudes
+        db.session.commit()
+
+        return jsonify({'message': 'Premium upgrade request submitted successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500

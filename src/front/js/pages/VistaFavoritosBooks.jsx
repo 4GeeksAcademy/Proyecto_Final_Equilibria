@@ -15,6 +15,7 @@ const VistaFavoritosBooks = () => {
 
     const handleEliminarFavorito = (id) => {
         actions.eliminarFavorito(id, "books"); // Acción para eliminar un libro de favoritos
+        actions.setStore("books", id)
     };
 
     return (

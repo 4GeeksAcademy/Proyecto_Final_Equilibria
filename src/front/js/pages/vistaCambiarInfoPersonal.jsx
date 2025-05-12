@@ -78,12 +78,12 @@ const VistaCambiarInfoPersonal = () => {
         <div className="card shadow-sm">
           <div className="card-body">
             <h1 className="card-title mb-3">Cambiar Información Personal</h1>
-            <p>
+            {/* <p>
               Usuario:{" "}
               <span className="badge bg-secondary">
                 {store.info?.name}
               </span>
-            </p>
+            </p> */}
 
             <form onSubmit={handleSubmit}>
               <div className="row g-3">

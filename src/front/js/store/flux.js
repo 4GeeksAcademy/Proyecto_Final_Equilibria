@@ -5,6 +5,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		store: {
 			// Información del usuario
 			// mensajePorMood : false,
+			pago: null,
 			info: null, // Información del usuario autenticado
 			token: sessionStorage.getItem("token") || null, // Token almacenado
 			mensajeIA: null, // Mensaje generado por IA
@@ -18,6 +19,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				books: null, // Libros favoritos
 				exercises: null // Ejercicios favoritos
 			}, // Lista de favoritos
+			listaEntradas: [],
 			demo: [
 				{
 					title: "FIRST",
@@ -133,7 +135,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					// fetching data from the backend
 					const token = sessionStorage.getItem("token");
-					const resp = await fetch(process.env.BACKEND_URL + "/api/user", {
+					if (!token) {
+						getActions.setStoreDefault()
+						return;
+					}
+					const resp = await fetch(process.env.BACKEND_URL + "api/user", {
 						method: "GET",
 						headers: {
 							"Authorization": "Bearer " + token
@@ -154,8 +160,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			logout: () => {
 				try {
 					sessionStorage.removeItem("token");
-					setStore({ info: null });
-					console.log("Usuario deslogueado exitosamente");
+					getActions.setStoreDefault();
 				} catch (error) {
 					console.log("Error al intentar cerrar sesión:", error);
 				}
@@ -171,6 +176,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 
 					if (!resp.ok) {
+
 						throw new Error("Error, token no es correcto");
 					}
 					let data = await resp.json();
@@ -191,9 +197,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 						}
 					});
 
+					if (resp.status === 404) {
+						setStore({ ...getStore(), favoritos: [] });
+						return true;
+					}
 					if (!resp.ok) {
 						throw new Error("Error, token no es correcto");
 					}
+					
 					let data = await resp.json();
 					const favoritos = {
 						quotes: [],
@@ -203,19 +214,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 						books: [],
 						exercises: []
 					};
-			
+
 					for (const ele of data) {
 						if (ele.type === "quote") {
 							favoritos.quotes.push(ele);
-						} else if (ele.type === "Película") {
+						} else if (ele.type === "película") {
 							favoritos.movies.push(ele);
-						} else if (ele.type === "Serie") {
+						} else if (ele.type === "serie") {
 							favoritos.series.push(ele);
-						} else if (ele.type === "Podcast") {
+						} else if (ele.type === "podcast") {
 							favoritos.podcasts.push(ele);
-						} else if (ele.type === "Libro") {
+						} else if (ele.type === "libro") {
 							favoritos.books.push(ele);
-						} else if (ele.type === "Ejercicio") {
+						} else if (ele.type === "ejercicio") {
 							favoritos.exercises.push(ele);
 						}
 					}
@@ -274,7 +285,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			isAdmin: async () => {
 				try {
 					const token = sessionStorage.getItem("token");
-					const resp = await fetch(process.env.BACKEND_URL + "/api/user", {
+					const resp = await fetch(process.env.BACKEND_URL + "api/user", {
 						method: "GET",
 						headers: {
 							"Authorization": "Bearer " + token
@@ -377,7 +388,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						},
 						body: JSON.stringify(favorito)
 
-						 });
+					});
 
 					if (!resp.ok) {
 						throw new Error("Error, token no es correcto");
@@ -494,10 +505,92 @@ const getState = ({ getStore, getActions, setStore }) => {
 			setStore: (seccion, favorito_id) => {
 				let store = getStore();
 				store.favoritos[seccion] = store.favoritos[seccion].filter((item) => item.id !== favorito_id);
-				setStore({ ...getStore(), [seccion] : store.favoritos[seccion] });
+				setStore({ ...getStore(), [seccion]: store.favoritos[seccion] });
 			},
+			descargarPDF: async (fechas) => {
+				try {
+					const token = sessionStorage.getItem("token");
+					const resp = await fetch(process.env.BACKEND_URL + "api/diario/export-pdf", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							"authorization": "Bearer " + token
+						},
+						body: JSON.stringify(fechas)
+					});
+
+					if (!resp.ok) {
+						throw new Error(`Error ${resp.status}`);
+					}
+
+					// 1) Lee la respuesta como blob (binario)
+					const blob = await resp.blob();
+
+					// 2) Crea un URL temporal para ese blob
+					const url = window.URL.createObjectURL(blob);
+
+					// 3) Crea y dispara un <a> "virtual"
+					const a = document.createElement("a");
+					a.href = url;
+					a.download = "mis_entradas_diario.pdf";
+					document.body.appendChild(a);
+					a.click();
+					a.remove();
+
+					// 4) Libera el objeto
+					window.URL.revokeObjectURL(url);
+				} catch (err) {
+					console.error("No se pudo descargar el PDF:", err);
+					alert("Error al generar el PDF. Intenta de nuevo.");
+				};
+
+			},
+			convertirPremium: async () => {
+				try {
+					const token = sessionStorage.getItem("token");
+					const resp = await fetch(process.env.BACKEND_URL + "api/user/upgrade", {
+						method: "POST",
+						headers: {
+							"authorization": "Bearer " + token
+						}
+					});
+
+					if (!resp.ok) {
+						throw new Error(`Error ${resp.status}`);
+					}
+					const store = getStore()
+					setStore({ ...getStore(), info: { ...store.info, is_premium: true } })
+					return true
+				} catch (err) {
+					console.error("No se pudo convertir a premiuum:", err);
+				};
+
+			},
+			setPago: () => {
+				setStore({
+					...getStore(), info: { ...store.info, is_premium: true }
+				});
+			},
+			setStoreDefault: () => ({
+				pago: null,
+				info: null,
+				token: null,
+				mensajeIA: null,
+				message: null,
+				estado: null,
+				favoritos: {
+					quotes: null,
+					movies: null,
+					series: null,
+					podcasts: null,
+					books: null,
+					exercises: null
+				},
+				listaEntradas: []
+			})
 
 		}
+
 	};
 };
 

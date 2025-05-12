@@ -7,6 +7,8 @@ const Diario = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
     const [url, setUrl] = useState("api/diario");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
 
     useEffect(() => {
         const fetchData = async () => {
@@ -16,7 +18,7 @@ const Diario = () => {
         };
 
         fetchData();
-    }, []);
+    }, [url]);
 
     const handleNavigate = (path) => {
         navigate(path);
@@ -26,6 +28,40 @@ const Diario = () => {
         actions.logout();
         navigate("/");
     };
+    const handleFiltrar = () => {
+        const s = startDate.trim();
+        const e = endDate.trim();
+
+        if (s > e) {
+            alert("La fecha de inicio no puede ser posterior a la de fin");
+            return;
+        }
+        setUrl(`api/diario/?start_date=${s}&end_date=${e}`)
+    };
+
+
+    const descargarPDF = async () => {
+        
+        const s = startDate.trim();
+        const e = endDate.trim();
+
+        if (!s && !e) {
+            actions.descargarPDF({});
+            return;
+        }
+
+        if (s && e) {
+            if (s > e) {
+                alert("La fecha de inicio debe ser anterior o igual a la de fin");
+                return;
+            }
+
+            await actions.descargarPDF({ start_date: s, end_date: e });
+            return;
+        }
+        alert("Por favor, completa fecha de inicio y fecha de fin, o déjalas ambas vacías para ver todo.");
+    };
+
 
     return (
         <div className="container mt-5">
@@ -58,7 +94,49 @@ const Diario = () => {
             </div>
 
             {/* Lista de entradas */}
+            
             <div>
+                <div className="row g-3 align-items-end mb-4">
+                    <div className="col-md-5">
+                        <label htmlFor="startDate" className="form-label">
+                            Fecha de inicio
+                        </label>
+                        <input
+                            type="date"
+                            id="startDate"
+                            className="form-control"
+                            value={startDate}
+                            onChange={e => setStartDate(e.target.value)}
+                        />
+                    </div>
+                    <div className="col-md-5">
+                        <label htmlFor="endDate" className="form-label">
+                            Fecha de fin
+                        </label>
+                        <input
+                            type="date"
+                            id="endDate"
+                            className="form-control"
+                            value={endDate}
+                            onChange={e => setEndDate(e.target.value)}
+                        />
+                    </div>
+                    <div className="col-md-2 d-flex gap-3">
+                        <button
+                            className="btn btn-primary"
+                            onClick={() => handleFiltrar()}
+                        >
+                            Filtrar
+                        </button>
+                        {store.listaEntradas && store.listaEntradas.length > 0 && (
+                        <button
+                            className="btn btn-primary "
+                            onClick={() => descargarPDF()}
+                        >
+                            Descargar PDF
+                        </button>)}
+                    </div>
+                </div>
                 {store.listaEntradas && store.listaEntradas.length > 0 ? (
                     store.listaEntradas.map((entrada) => (
                         <div
