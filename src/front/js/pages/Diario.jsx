@@ -11,13 +11,9 @@ const Diario = () => {
     const [endDate, setEndDate] = useState("");
 
     useEffect(() => {
-        const fetchData = async () => {
-            const seccion = "listaEntradas";
-            await actions.listaFetch(url, seccion);
-            await actions.mensajePorMood();
-        };
-
-        fetchData();
+        const seccion = "listaEntradas";
+        actions.listaFetch(url, seccion);
+        actions.mensajePorMood();
     }, [url]);
 
     const handleNavigate = (path) => {
@@ -44,7 +40,7 @@ const Diario = () => {
 
 
     const descargarPDF = async () => {
-        
+
         const s = startDate.trim();
         const e = endDate.trim();
 
@@ -97,7 +93,7 @@ const Diario = () => {
             </div>
 
             {/* Lista de entradas */}
-            
+
             <div>
                 <div className="row g-3 align-items-end mb-4">
                     <div className="col-md-5">
@@ -132,14 +128,25 @@ const Diario = () => {
                             Filtrar
                         </button>
                         {store.listaEntradas && store.listaEntradas.length > 0 && (
-                        <button
-                            className="btn btn-primary "
-                            onClick={() => descargarPDF()}
-                        >
-                            Descargar PDF
-                        </button>)}
+                            <button
+                                className="btn btn-primary "
+                                onClick={() => descargarPDF()}
+                            >
+                                Descargar PDF
+                            </button>)}
                     </div>
                 </div>
+
+                {/* Botón para crear nueva entrada */}
+                <div className="d-flex justify-content-center align-items-center mb-4">
+                    <button
+                        className="btn btn-primary btn-lg shadow-sm d-flex align-items-center justify-content-center"
+                        onClick={() => handleNavigate("/registrar-entrada")}
+                    >
+                        + Crear nueva entrada
+                    </button>
+                </div>
+
                 {store.listaEntradas && store.listaEntradas.length > 0 ? (
                     store.listaEntradas.map((entrada) => (
                         <div
@@ -159,23 +166,12 @@ const Diario = () => {
                         </div>
                     ))
                 ) : (
-                    <h4 className="text-center text-muted mt-4">
-                        No hay entradas registradas.
-                    </h4>
-                )}
-            </div>
+                    <div className="text-center mt-4">
+                        <h4 className="text-muted">No hay entradas registradas.</h4>
+                        <p className="text-muted">¡Crea tu primera entrada para comenzar!</p>
 
-            {/* Botón fijo para escribir en el diario */}
-            <div className="position-fixed bottom-0 end-0 m-4">
-                <button
-                    className="btn btn-primary btn-lg rounded-circle shadow-sm d-flex align-items-center justify-content-center"
-                    style={{ width: "60px", height: "60px" }}
-                    onClick={() => handleNavigate("/registrar-entrada")}
-                >
-                    <i>
-                        +
-                    </i>
-                </button>
+                    </div>
+                )}
             </div>
         </div>
     );

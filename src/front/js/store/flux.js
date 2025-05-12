@@ -19,6 +19,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				books: null, // Libros favoritos
 				exercises: null // Ejercicios favoritos
 			}, // Lista de favoritos
+			listaEntradas: [],
 			demo: [
 				{
 					title: "FIRST",
@@ -134,6 +135,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					// fetching data from the backend
 					const token = sessionStorage.getItem("token");
+					if (!token) {
+						getActions.setStoreDefault()
+						return;
+					}
 					const resp = await fetch(process.env.BACKEND_URL + "api/user", {
 						method: "GET",
 						headers: {
@@ -155,8 +160,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			logout: () => {
 				try {
 					sessionStorage.removeItem("token");
-					setStore({ info: null });
-					console.log("Usuario deslogueado exitosamente");
+					getActions.setStoreDefault();
 				} catch (error) {
 					console.log("Error al intentar cerrar sesión:", error);
 				}
@@ -172,6 +176,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 
 					if (!resp.ok) {
+
 						throw new Error("Error, token no es correcto");
 					}
 					let data = await resp.json();
@@ -549,7 +554,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						throw new Error(`Error ${resp.status}`);
 					}
 					const store = getStore()
-					setStore({...getStore(), info: { ...store.info, is_premium: true}})
+					setStore({ ...getStore(), info: { ...store.info, is_premium: true } })
 					return true
 				} catch (err) {
 					console.error("No se pudo convertir a premiuum:", err);
@@ -560,7 +565,24 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({
 					...getStore(), info: { ...store.info, is_premium: true }
 				});
-			}
+			},
+			setStoreDefault: () => ({
+				pago: null,
+				info: null,
+				token: null,
+				mensajeIA: null,
+				message: null,
+				estado: null,
+				favoritos: {
+					quotes: null,
+					movies: null,
+					series: null,
+					podcasts: null,
+					books: null,
+					exercises: null
+				},
+				listaEntradas: []
+			})
 
 		}
 
