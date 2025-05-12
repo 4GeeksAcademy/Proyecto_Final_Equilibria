@@ -105,18 +105,13 @@ const Dashboard = () => {
                                         <div className="alert alert-info text-center w-100">
                                             <p>Buscando tu dosis de inspiración...</p>
                                         </div>
-                                    ) : store.fraseMotivacional ? (
+                                    ) : store.fraseMotivacional && (
                                         <div className="alert alert-success text-center w-100 shadow-sm">
                                             <h4 className="mb-2">"{store.fraseMotivacional.quote}"</h4>
                                             <p className="mb-0 text-muted">— {store.fraseMotivacional.author}</p>
                                         </div>
-                                    ) : null}
-                                </>
-                            ) : (
-                                <h4 className="text-danger">No encontramos tu información...</h4>
-                            )}
-
-                            {/* Tarjetas de navegación */}
+                                    )}
+                                    {/* Tarjetas de navegación */}
                             <div className="row row-cols-1 row-cols-md-2 g-4 mt-4 w-100">
                                 {/* Diario */}
                                 <div className="col">
@@ -198,6 +193,12 @@ const Dashboard = () => {
                                     </div>
                                 </div>
                             </div>
+                                </>
+                            ) : (
+                                <h4 className="text-danger">No encontramos tu información...</h4>
+                            )}
+
+                            
                         </div>
                     </div>
                 )}

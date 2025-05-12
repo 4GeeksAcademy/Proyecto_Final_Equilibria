@@ -34,12 +34,13 @@ const Favoritos = () => {
                 </button>
             </div>
             <h1 className="text-center mb-4 text-primary">Tus Favoritos</h1>
-            <p className="text-center text-muted">Aquí puedes ver y gestionar tus frases favoritas.</p>
+            <p className="text-center text-muted">Aquí puedes ver y gestionar todos tus favoritos.</p>
 
-            <div className="row">
+            <div className="row d-flex justify-content-center flex-column">
                 {/* Sección de Quotes */}
                 {store.favoritos?.quotes?.length > 0 && (
-                    <div className="col-md-6 mb-4">
+                    <div className="col-md-6 mb-4 text-center container shadow rounded p-3">
+                        <h4>Tus palabras favoritas, siempre a tu alcance.</h4>
                         <button className="btn btn-primary" onClick={() => handleNavigate("/favoritos-quotes")}>
                             <span className="ms-2">Frases</span>
                         </button>
@@ -48,7 +49,8 @@ const Favoritos = () => {
 
                 {/* Sección de Películas */}
                 {store.favoritos?.movies?.length > 0 && (
-                    <div className="col-md-6 mb-4">
+                    <div className="col-md-6 mb-4 text-center container shadow rounded p-3">
+                        <h4>Tus películas favoritas, siempre disponibles.</h4>
                         <button className="btn btn-primary" onClick={() => handleNavigate("/favoritos-movies")}>
                             <span className="ms-2">Películas</span>
                         </button>
@@ -57,7 +59,8 @@ const Favoritos = () => {
 
                 {/* Sección de Series */}
                 {store.favoritos?.series?.length > 0 && (
-                    <div className="col-md-6 mb-4">
+                    <div className="col-md-6 mb-4 text-center container shadow rounded p-3">
+                        <h4>Tus series favoritas, listas para ver.</h4>
                         <button className="btn btn-primary" onClick={() => handleNavigate("/favoritos-series")}>
                             <span className="ms-2">Series</span>
                         </button>
@@ -66,7 +69,8 @@ const Favoritos = () => {
 
                 {/* Sección de Podcasts */}
                 {store.favoritos?.podcasts?.length > 0 && (
-                    <div className="col-md-6 mb-4">
+                    <div className="col-md-6 mb-4 text-center container shadow rounded p-3">
+                        <h4>Tus podcasts favoritos, siempre a mano.</h4>
                         <button className="btn btn-primary" onClick={() => handleNavigate("/favoritos-podcasts")}>
                             <span className="ms-2">Podcasts</span>
                         </button>
@@ -75,7 +79,8 @@ const Favoritos = () => {
 
                 {/* Sección de Libros */}
                 {store.favoritos?.books?.length > 0 && (
-                    <div className="col-md-6 mb-4">
+                    <div className="col-md-6 mb-4 text-center container shadow rounded p-3">
+                        <h4>Tus libros favoritos, para disfrutar.</h4>
                         <button className="btn btn-primary" onClick={() => handleNavigate("/favoritos-books")}>
                             <span className="ms-2">Libros</span>
                         </button>
@@ -84,7 +89,8 @@ const Favoritos = () => {
 
                 {/* Sección de Ejercicios */}
                 {store.favoritos?.exercises?.length > 0 && (
-                    <div className="col-md-6 mb-4">
+                    <div className="col-md-6 mb-4 text-center container shadow rounded p-3">
+                        <h4>Tus ejercicios favoritos, listos para practicar.</h4>
                         <button className="btn btn-primary" onClick={() => handleNavigate("/favoritos-exercises")}>
                             <span className="ms-2">Ejercicios</span>
                         </button>

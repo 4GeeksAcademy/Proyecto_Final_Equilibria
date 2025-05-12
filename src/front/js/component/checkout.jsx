@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 
 
-const Checkout = () => {
+const Checkout = ({ onSuccess }) => {
     // Accede al estado del SDK de PayPal
     const [{ options, isPending }, dispatch] = usePayPalScriptReducer();
     const [currency, setCurrency] = useState(options.currency);
@@ -43,6 +43,7 @@ const Checkout = () => {
                 // Llama a la acción global para convertir al usuario en premium
                 const success = await fluxActions.convertirPremium();
                 if (success) {
+                    onSuccess();
                     alert("¡Felicidades! Ahora eres un usuario premium.");
                     navigate("/dashboard"); 
                 } else {

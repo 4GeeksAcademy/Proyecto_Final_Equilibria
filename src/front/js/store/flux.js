@@ -208,15 +208,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 					for (const ele of data) {
 						if (ele.type === "quote") {
 							favoritos.quotes.push(ele);
-						} else if (ele.type === "Película") {
+						} else if (ele.type === "película") {
 							favoritos.movies.push(ele);
-						} else if (ele.type === "Serie") {
+						} else if (ele.type === "serie") {
 							favoritos.series.push(ele);
-						} else if (ele.type === "Podcast") {
+						} else if (ele.type === "podcast") {
 							favoritos.podcasts.push(ele);
-						} else if (ele.type === "Libro") {
+						} else if (ele.type === "libro") {
 							favoritos.books.push(ele);
-						} else if (ele.type === "Ejercicio") {
+						} else if (ele.type === "ejercicio") {
 							favoritos.exercises.push(ele);
 						}
 					}

@@ -155,10 +155,15 @@ const VistaUsuarios = () => {
                                     ) : (
                                         <span className="text-secondary">Usuario</span>
                                     )}</p>
-                                    <p className="card-text">{usuario.force_password_change !== null ? (
-                                        <span className="text-success">Verificado</span>
+                                    <p className="card-text">{usuario.force_password_change !== false ? (
+                                        <span className="text-success">Forzado el cambio de la contraseña</span>
                                     ) : (
-                                        <span className="text-danger">No verificado</span>
+                                        <span className="text-danger"></span>
+                                    )}</p>
+                                    <p className="card-text">{usuario.is_premium ? (
+                                        <span className="text-success">Es premium</span>
+                                    ) : (
+                                        <span className="text-danger">No es premium</span>
                                     )}</p>
                                 </div>
                                 <div className="buttons d-flex flex-column col-6 justify-content-between px-1">
