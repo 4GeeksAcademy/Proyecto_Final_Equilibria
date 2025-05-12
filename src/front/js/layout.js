@@ -32,6 +32,7 @@ import VistaFavoritosexercises from "./pages/vistaFavoritosexercises.jsx";
 import VistaCambiarInfoPersonal from "./pages/vistaCambiarInfoPersonal.jsx";
 import ReestablecerContrasena from "./pages/ReestablecerContrasena.jsx";
 import Checkout from "./component/checkout.jsx";
+import LandingPage from "./pages/LandingPage.jsx";
 
 //create your first component
 const Layout = () => {
@@ -49,7 +50,8 @@ const Layout = () => {
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
                     <Routes>
-                        <Route element={<Login />} path="/" />
+                        <Route element={<Login />} path="/login" />
+                        <Route element={<LandingPage />} path="/" />
                         <Route element={<Signup />} path="/signup" />
                         <Route element={<SignupAdmin />} path="/signup-admin" />
                         <Route element={<ReestablecerContrasena />} path="/reestablecer-contrasena" />

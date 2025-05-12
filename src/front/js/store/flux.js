@@ -197,9 +197,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 						}
 					});
 
+					if (resp.status === 404) {
+						setStore({ ...getStore(), favoritos: [] });
+						return true;
+					}
 					if (!resp.ok) {
 						throw new Error("Error, token no es correcto");
 					}
+					
 					let data = await resp.json();
 					const favoritos = {
 						quotes: [],
