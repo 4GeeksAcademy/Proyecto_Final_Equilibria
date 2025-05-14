@@ -79,13 +79,12 @@ const Dashboard = () => {
                     <div>
                         {/* Header amigable */}
                         <div className="w-100 d-flex justify-content-between align-items-center p-3 bg-white shadow-sm">
-                            <h1 className="page-title" style={{ fontFamily: "Roboto, sans-serif", color: "#7A4D9B", animation: "fadeIn 2s" }}>Equilibra</h1>
+                            <h1 className="page-title">Equilibra</h1>
                             <div className="d-flex gap-2">
                                 {/* Mostrar botón solo si el usuario no es premium */}
                                 {!store.info?.is_premium && (
                                     <button
-                                        className="btn"
-                                        style={{ backgroundColor: "#7A4D9B", color: "#fff" }}
+                                        className="btn btn-warning"
                                         onClick={() => setShowCheckout(true)}
                                     >
                                         ¡Hazme Premium!
@@ -93,18 +92,13 @@ const Dashboard = () => {
                                 )}
                                 {store.info?.is_admin && (
                                     <button
-                                        className="btn"
-                                        style={{ backgroundColor: "#7A4D9B", color: "#fff" }}
+                                        className="btn btn-info"
                                         onClick={() => handleNavigate("/admin-dashboard")}
                                     >
                                         Panel de Admin
                                     </button>
                                 )}
-                                <button
-                                    className="btn btn-outline-danger"
-                                    onClick={handleLogout}
-                                    style={{ backgroundColor: "#7A4D9B", color: "#fff" }}
-                                >
+                                <button className="btn btn-outline-danger" onClick={handleLogout}>
                                     Cerrar sesión
                                 </button>
                             </div>
@@ -115,7 +109,7 @@ const Dashboard = () => {
                             {store.info ? (
                                 <>
                                     <div className="modal-body">
-                                        <h2 className="text-primary mb-3" style={{ color: "#7A4D9B", animation: "fadeIn 2s" }}>¡Hola, {store.info.name}! 😊</h2>
+                                        <h2 className="text-primary mb-3">¡Hola, {store.info.name}! 😊</h2>
                                         Bienvenido a Equilibria ✨
                                         <p className="mt-2">Tu bienestar es nuestra prioridad. Algunas respuestas y recomendaciones son generadas automáticamente por nuestra IA para brindarte una experiencia más personalizada.</p>
                                     </div>
@@ -138,8 +132,7 @@ const Dashboard = () => {
                                                     <h5 className="card-title">Diario personal</h5>
                                                     <p className="card-text">Escribe y reflexiona sobre tu día.</p>
                                                     <button
-                                                        className="btn"
-                                                        style={{ backgroundColor: "#7A4D9B", color: "#fff" }}
+                                                        className="btn btn-primary"
                                                         onClick={() => handleNavigate("/diario")}
                                                     >
                                                         ¡Escribir!
@@ -155,8 +148,7 @@ const Dashboard = () => {
                                                     <h5 className="card-title">Frases motivacionales</h5>
                                                     <p className="card-text">Encuentra esa frase que te impulse.</p>
                                                     <button
-                                                        className="btn"
-                                                        style={{ backgroundColor: "#7A4D9B", color: "#fff" }}
+                                                        className="btn btn-secondary"
                                                         onClick={() => handleNavigate("/frases-motivacionales")}
                                                     >
                                                         Ver frases
@@ -172,8 +164,7 @@ const Dashboard = () => {
                                                     <h5 className="card-title">Recomendaciones</h5>
                                                     <p className="card-text">Sugerencias para tu bienestar.</p>
                                                     <button
-                                                        className="btn"
-                                                        style={{ backgroundColor: "#7A4D9B", color: "#fff" }}
+                                                        className="btn btn-success"
                                                         onClick={() => handleNavigate("/recomendaciones")}
                                                     >
                                                         ¡Vamos!
@@ -189,8 +180,7 @@ const Dashboard = () => {
                                                     <h5 className="card-title">Favoritos</h5>
                                                     <p className="card-text">Guarda lo que más te inspira.</p>
                                                     <button
-                                                        className="btn"
-                                                        style={{ backgroundColor: "#7A4D9B", color: "#fff" }}
+                                                        className="btn btn-warning"
                                                         onClick={() => handleNavigateFavoritos()}
                                                     >
                                                         Mis favoritos
@@ -206,8 +196,7 @@ const Dashboard = () => {
                                                     <h5 className="card-title">Mi perfil</h5>
                                                     <p className="card-text">Actualiza tus datos personales.</p>
                                                     <button
-                                                        className="btn"
-                                                        style={{ backgroundColor: "#7A4D9B", color: "#fff" }}
+                                                        className="btn btn-info"
                                                         onClick={() => handleNavigate("/cambiar-info")}
                                                     >
                                                         Editar perfil
@@ -220,6 +209,8 @@ const Dashboard = () => {
                             ) : (
                                 <h4 className="text-danger">No encontramos tu información...</h4>
                             )}
+
+
                         </div>
                     </div>
                 )}
